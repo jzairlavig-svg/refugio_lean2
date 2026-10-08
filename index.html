@@ -327,6 +327,12 @@ textarea:focus, .input:focus { border-color: var(--primary); }
 .auth-card .link-btn { align-self: center; }
 .hello .name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+/* ---------- Encuesta emergente (pop-up centrado) ---------- */
+.overlay.center { align-items: center; justify-content: center; padding: 24px; }
+.overlay.center .sheet { border-radius: 24px; max-width: 340px; padding: 20px; animation: fade 0.25s ease both; }
+.overlay.center .sheet-head h3 { font-size: 18px; }
+.overlay.center .sheet .link-btn { display: block; }
+
 </style>
 </head>
 <body>
@@ -554,7 +560,7 @@ textarea:focus, .input:focus { border-color: var(--primary); }
             <p>${p.text.replace(/</g, "&lt;")}</p>
             <div class="post-foot">
               <button class="${p.liked ? "liked" : ""}" data-action="like" data-id="${p.id}">${icon("heart", 15, 1.8)} Me gusta · ${p.likes}</button>
-              <button data-action="toast" data-msg="Los comentarios llegarán pronto">${icon("comment", 15, 1.8)} Comentar</button>
+              <button data-action="comment" data-id="${p.id}">${icon("comment", 15, 1.8)} Comentar${p.comments ? " · " + p.comments : ""}</button>
             </div>
           </article>`).join("")}
         <div class="share"><button data-action="share">${icon("pencil", 15, 2)} Compartir cómo me siento</button></div>`;
@@ -638,7 +644,7 @@ textarea:focus, .input:focus { border-color: var(--primary); }
       </div>`;
     if (onMount) onMount($overlay);
   }
-  function closeSheet() { $overlay.hidden = true; $overlay.innerHTML = ""; }
+  function closeSheet() { $overlay.hidden = true; $overlay.innerHTML = ""; $overlay.classList.remove("center"); }
 
   function toast(msg) {
     const old = $app.querySelector(".toast");
@@ -708,6 +714,27 @@ textarea:focus, .input:focus { border-color: var(--primary); }
       root => root.querySelector("#postText").focus());
   }
 
+  function openComment(id) {
+    sheet("Escribe un comentario", `
+      <textarea id="commentText" rows="4" maxlength="200" placeholder="Un mensaje amable puede hacer mucho."></textarea>
+      <button class="btn" style="margin-top:12px" data-action="sendComment" data-id="${id}">Enviar comentario</button>`,
+      root => root.querySelector("#commentText").focus());
+  }
+
+  /* Encuesta emergente: aparece al dejar el primer comentario */
+  function openSurvey() {
+    sheet("¿Cómo te sentiste?", `
+      <p class="subtle" style="margin:-4px 0 4px;line-height:1.45">Cuéntanos qué tal fue comentar. Tu respuesta es anónima y nos ayuda a mejorar Refugio.</p>
+      <div class="moods">
+        ${MOODS.map((m, i) => `
+          <button class="mood" data-action="survey" data-i="${i}" aria-label="${m.l}">
+            <span class="face">${m.e}</span>${m.l}
+          </button>`).join("")}
+      </div>
+      <button class="link-btn" style="margin-top:14px;align-self:center" data-action="close">Ahora no</button>`);
+    $overlay.classList.add("center");
+  }
+
   /* ---------- Eventos ---------- */
   document.addEventListener("click", e => {
     const el = e.target.closest("[data-action]");
@@ -753,6 +780,23 @@ textarea:focus, .input:focus { border-color: var(--primary); }
         state.session = null; store.set("session", null);
         state.authMode = "login"; state.authNick = ""; state.tab = "inicio";
         render(); break;
+      case "comment": openComment(d.id); break;
+      case "sendComment": {
+        const txt = document.getElementById("commentText").value.trim();
+        if (!txt) return;
+        const p = state.posts.find(x => x.id === +d.id);
+        p.comments = (p.comments || 0) + 1;
+        store.set("posts", state.posts);
+        closeSheet(); render();
+        if (!store.get("firstCommentDone", false)) {
+          store.set("firstCommentDone", true);
+          setTimeout(openSurvey, 450);
+        } else toast("Gracias por comentar 💜");
+        break;
+      }
+      case "survey":
+        store.set("survey", { value: MOODS[+d.i].l, at: new Date().toISOString() });
+        closeSheet(); toast("¡Gracias por contarnos!"); break;
       case "toast": toast(d.msg); break;
       case "close": closeSheet(); break;
     }
