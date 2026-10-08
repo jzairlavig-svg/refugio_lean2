@@ -309,6 +309,24 @@ textarea:focus, .input:focus { border-color: var(--primary); }
   font-size: 12.5px; z-index: 30; animation: fade 0.25s ease both; white-space: nowrap;
 }
 
+/* ---------- Login / registro ---------- */
+.auth { display: flex; flex-direction: column; gap: 14px; padding-top: 4px; }
+.auth-hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; margin: 6px 0 2px; }
+.auth-hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.4px; margin-top: 4px; }
+.auth-hero .subtle { max-width: 260px; line-height: 1.45; font-size: 13.5px; }
+.brand.big { font-size: 15px; }
+.auth-card { margin: 0; display: flex; flex-direction: column; gap: 12px; padding: 18px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 12px; font-weight: 600; color: var(--muted); }
+.pw { position: relative; }
+.pw .input { padding-right: 46px; }
+.pw .eye { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; display: grid; place-items: center; color: var(--muted); border-radius: 10px; }
+.auth-error { font-size: 12px; color: var(--red-dot); line-height: 1.4; }
+.auth-error:empty { display: none; }
+.link-btn { color: var(--primary); font-size: 12.5px; font-weight: 600; padding: 2px 4px; }
+.auth-card .link-btn { align-self: center; }
+.hello .name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 </style>
 </head>
 <body>
@@ -357,9 +375,17 @@ textarea:focus, .input:focus { border-color: var(--primary); }
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
     bell: '<path d="M6 17V11a6 6 0 0 1 12 0v6l1.500 2h-15z"/>',
     sprout: '<path d="M12 21v-9"/><path d="M12 12C12 8 9 6 5 6c0 4 2 6 7 6z"/><path d="M12 14c0-3 2.500-5 6-5 0 3-2 5-6 5z"/>',
-    brand: '<circle cx="7" cy="17" r="2"/><circle cx="17" cy="6" r="2"/><path d="M8.500 15.500C11 13 13 11 15.500 7.500"/><path d="M5 7c2 0 4 1 5 3"/>'
+    brand: '<circle cx="7" cy="17" r="2"/><circle cx="17" cy="6" r="2"/><path d="M8.500 15.500C11 13 13 11 15.500 7.500"/><path d="M5 7c2 0 4 1 5 3"/>',
+    eye: '<path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'
   };
-  const icon = (n, s = 18, sw = 1.8, extra = "") =>
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  async function sha(s) {
+    try {
+      const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+      return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, "0")).join("");
+    } catch (e) { return btoa(unescape(encodeURIComponent(s))); }
+  }
+  const icon =(n, s = 18, sw = 1.8, extra = "") =>
     `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" ${extra}>${P[n]}</svg>`;
 
   /* ---------- Estado ---------- */
@@ -370,6 +396,9 @@ textarea:focus, .input:focus { border-color: var(--primary); }
 
   const state = {
     tab: "inicio",
+    session: store.get("session", null),
+    authMode: "login",
+    authNick: "",
     mood: store.get("mood", 2),
     signal: store.get("signal", "red"),
     posts: store.get("posts", [
@@ -396,11 +425,48 @@ textarea:focus, .input:focus { border-color: var(--primary); }
 
   /* ---------- Pantallas ---------- */
   const views = {
+    auth() {
+      const reg = state.authMode === "register";
+      return `
+        <div class="auth">
+          <div class="auth-hero">
+            <div class="avatar lg" style="background:#fbe3d3">🦊</div>
+            <span class="brand big">${icon("brand", 18, 1.8)} refugio</span>
+            <h1>${reg ? "Crea tu espacio" : "Qué bueno verte"}</h1>
+            <p class="subtle">${reg ? "No necesitas datos reales. Solo elige un apodo." : "Entra a tu espacio seguro. Aquí nadie te juzga."}</p>
+          </div>
+
+          <form class="card auth-card" data-form="auth" novalidate>
+            <div class="field">
+              <label for="f-apodo">${reg ? "Elige un apodo con el que te sientas cómodo" : "Tu apodo"}</label>
+              <input class="input" id="f-apodo" name="apodo" type="text" placeholder="${reg ? "Por ejemplo: Luna, Gato, Sol…" : "Escribe tu apodo"}" autocomplete="username" maxlength="24" value="${esc(state.authNick)}" />
+            </div>
+            <div class="field">
+              <label for="f-clave">Contraseña</label>
+              <div class="pw">
+                <input class="input" id="f-clave" name="clave" type="password" placeholder="${reg ? "Mínimo 4 caracteres" : "Tu contraseña"}" autocomplete="${reg ? "new-password" : "current-password"}" />
+                <button type="button" class="eye" data-action="togglePw" aria-label="Mostrar u ocultar contraseña">${icon("eye", 18, 1.8)}</button>
+              </div>
+            </div>
+            <p class="auth-error" id="authError" role="alert"></p>
+            <button class="btn" type="submit">${reg ? "Crear cuenta" : "Iniciar sesión"}</button>
+            ${reg ? "" : `<button type="button" class="link-btn" data-action="toast" data-msg="Esta demo guarda los datos solo en tu dispositivo">¿Olvidaste tu contraseña?</button>`}
+          </form>
+
+          <p class="subtle center">
+            ${reg ? "¿Ya tienes cuenta?" : "¿Aún no tienes cuenta?"}
+            <button type="button" class="link-btn" data-action="authMode" data-mode="${reg ? "login" : "register"}">${reg ? "Inicia sesión" : "Crear cuenta"}</button>
+          </p>
+          <button type="button" class="btn ghost" data-action="guest">Entrar sin cuenta</button>
+          <p class="subtle center" style="font-size:11px;line-height:1.45">Tus datos se guardan solo en este dispositivo.</p>
+        </div>`;
+    },
+
     inicio() {
       return `
         <div class="header">
           <h1>Inicio</h1>
-          <div class="hello">Hola, <div class="avatar" style="background:#f3dccb">🦊</div></div>
+          <div class="hello"><span class="name">Hola${state.session && state.session.name ? ", " + esc(state.session.name.split(" ")[0]) : ","}</span> <div class="avatar" style="background:#f3dccb">🦊</div></div>
         </div>
 
         <section class="card">
@@ -465,7 +531,8 @@ textarea:focus, .input:focus { border-color: var(--primary); }
             <span>Un lugar para ordenar lo que siento.</span>
           </button>
         </div>
-        <p class="subtle center">No hay una forma correcta de sentirse.</p>`;
+        <p class="subtle center">No hay una forma correcta de sentirse.</p>
+        <button class="btn ghost" data-action="logout" style="margin-top:16px">Cerrar sesión</button>`;
     },
 
     comunidad() {
@@ -545,8 +612,10 @@ textarea:focus, .input:focus { border-color: var(--primary); }
   const $app = document.getElementById("app");
 
   function render() {
-    $screen.innerHTML = views[state.tab]();
-    $tabbar.innerHTML = TABS.map(t => `
+    const logged = !!state.session;
+    $screen.innerHTML = logged ? views[state.tab]() : views.auth();
+    $tabbar.style.display = logged ? "" : "none";
+    $tabbar.innerHTML = !logged ? "" : TABS.map(t => `
       <button class="tab ${state.tab === t.k ? "active" : ""}" data-action="go" data-tab="${t.k}" aria-label="${t.l}">
         <span class="pill">${icon(t.i, 20, 1.8)}</span>${t.l}
       </button>`).join("");
@@ -669,8 +738,52 @@ textarea:focus, .input:focus { border-color: var(--primary); }
         store.set("posts", state.posts);
         closeSheet(); render(); toast("Gracias por compartir 💜"); break;
       }
+      case "authMode": {
+        const em = document.querySelector('form[data-form="auth"] [name="apodo"]');
+        state.authNick = em ? em.value : "";
+        state.authMode = d.mode; render(); break;
+      }
+      case "togglePw": {
+        const pw = document.querySelector('form[data-form="auth"] [name="clave"]');
+        if (pw) pw.type = pw.type === "password" ? "text" : "password";
+        break;
+      }
+      case "guest": startSession({ name: "", guest: true }); break;
+      case "logout":
+        state.session = null; store.set("session", null);
+        state.authMode = "login"; state.authNick = ""; state.tab = "inicio";
+        render(); break;
       case "toast": toast(d.msg); break;
       case "close": closeSheet(); break;
+    }
+  });
+
+  function startSession(s) {
+    state.session = s; store.set("session", s);
+    state.tab = "inicio"; render(); $screen.scrollTop = 0;
+  }
+
+  document.addEventListener("submit", async e => {
+    const f = e.target.closest('form[data-form="auth"]');
+    if (!f) return;
+    e.preventDefault();
+    const err = f.querySelector("#authError");
+    const fail = m => { err.textContent = m; };
+    const nick = f.querySelector('[name="apodo"]').value.trim();
+    const key = nick.toLowerCase();
+    const pass = f.querySelector('[name="clave"]').value;
+    if (!nick) return fail("Escribe el apodo que quieras usar.");
+    const users = store.get("users", {});
+    if (state.authMode === "register") {
+      if (pass.length < 4) return fail("La contraseña debe tener al menos 4 caracteres.");
+      if (users[key]) return fail("Ese apodo ya existe. Prueba con otro o inicia sesión.");
+      users[key] = { name: nick, hash: await sha(pass) };
+      store.set("users", users);
+      startSession({ name: nick });
+    } else {
+      const u = users[key];
+      if (!u || u.hash !== await sha(pass)) return fail("Apodo o contraseña incorrectos.");
+      startSession({ name: u.name });
     }
   });
 
