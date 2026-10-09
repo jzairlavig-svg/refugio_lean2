@@ -333,6 +333,31 @@ textarea:focus, .input:focus { border-color: var(--primary); }
 .overlay.center .sheet-head h3 { font-size: 18px; }
 .overlay.center .sheet .link-btn { display: block; }
 
+/* ---------- Mejoras alineadas con el informe TB2 ---------- */
+.stack { display: flex; flex-direction: column; gap: 10px; }
+.appear { animation: fade 0.3s ease both; }
+.btn:disabled { opacity: 0.45; box-shadow: none; cursor: not-allowed; }
+.hours { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted); margin-top: 12px; }
+.privacy { display: flex; flex-direction: column; gap: 7px; background: #f3f4ff; border-radius: 12px; padding: 10px 12px; margin-top: 12px; font-size: 11.5px; color: #4d5278; line-height: 1.4; }
+.privacy > div { display: flex; gap: 7px; align-items: flex-start; }
+.privacy svg { flex-shrink: 0; margin-top: 1px; color: var(--primary); }
+.center-btn { display: block; margin: 12px auto 0; color: var(--muted); font-weight: 500; }
+.avatars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.av { aspect-ratio: 1; border-radius: 16px; display: grid; place-items: center; font-size: 26px; border: 2px solid transparent; transition: all 0.15s; }
+.av.active { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(107, 111, 242, 0.14); transform: scale(1.04); }
+.reacts { display: flex; gap: 8px; margin: 0 0 12px; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 999px; background: #f3f4fb; color: var(--muted); font-size: 12px; border: 1.5px solid transparent; transition: all 0.15s; }
+.chip.on { background: var(--primary-soft); color: var(--primary); border-color: var(--primary); font-weight: 600; }
+.chips-label { font-size: 12px; font-weight: 600; color: var(--muted); margin-top: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
+.chips .chip { padding: 9px 13px; font-size: 13px; }
+.chip.day { text-transform: capitalize; }
+.cita-banner { display: flex; align-items: center; gap: 10px; background: var(--primary-soft); color: #4a4eb8; border-radius: 14px; padding: 11px 13px; font-size: 13px; margin-bottom: 12px; }
+.cita-banner span { flex: 1; }
+.checklist { list-style: none; display: flex; flex-direction: column; gap: 11px; margin: 4px 0 18px; font-size: 13.5px; line-height: 1.4; }
+.checklist li { display: flex; gap: 10px; align-items: flex-start; }
+.checklist .check { width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px; }
+
 </style>
 </head>
 <body>
@@ -382,7 +407,9 @@ textarea:focus, .input:focus { border-color: var(--primary); }
     bell: '<path d="M6 17V11a6 6 0 0 1 12 0v6l1.500 2h-15z"/>',
     sprout: '<path d="M12 21v-9"/><path d="M12 12C12 8 9 6 5 6c0 4 2 6 7 6z"/><path d="M12 14c0-3 2.500-5 6-5 0 3-2 5-6 5z"/>',
     brand: '<circle cx="7" cy="17" r="2"/><circle cx="17" cy="6" r="2"/><path d="M8.500 15.500C11 13 13 11 15.500 7.500"/><path d="M5 7c2 0 4 1 5 3"/>',
-    eye: '<path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'
+    eye: '<path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    clock: '<circle cx="12" cy="12" r="8.500"/><path d="M12 7.500V12l3 2"/>',
+    calendar: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'
   };
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   async function sha(s) {
@@ -391,8 +418,20 @@ textarea:focus, .input:focus { border-color: var(--primary); }
       return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, "0")).join("");
     } catch (e) { return btoa(unescape(encodeURIComponent(s))); }
   }
-  const icon =(n, s = 18, sw = 1.8, extra = "") =>
+  const icon = (n, s = 18, sw = 1.8, extra = "") =>
     `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" ${extra}>${P[n]}</svg>`;
+
+  /* ---------- Configuración editable ---------- */
+  const HORARIO = "Lunes a viernes · 8:00 a. m. – 1:00 p. m.";   // horario de atención del psicólogo
+  const TIMES = ["8:00 a. m.", "9:30 a. m.", "11:00 a. m.", "12:30 p. m."];
+
+  const AVATARS = [
+    { n: "Zorrito", e: "🦊", bg: "#fbe3d3" }, { n: "Osito", e: "🐻", bg: "#efe0d2" },
+    { n: "Gatito", e: "🐱", bg: "#f6e3d6" }, { n: "Perrito", e: "🐶", bg: "#efe0d2" },
+    { n: "Pingüino", e: "🐧", bg: "#e3e5f7" }, { n: "Conejo", e: "🐰", bg: "#f3e4ee" },
+    { n: "Búho", e: "🦉", bg: "#e8e3f7" }, { n: "Panda", e: "🐼", bg: "#e6ecf4" }
+  ];
+  const avatarOf = s => AVATARS[s && Number.isInteger(s.avatar) ? s.avatar : 0] || AVATARS[0];
 
   /* ---------- Estado ---------- */
   const store = {
@@ -405,41 +444,59 @@ textarea:focus, .input:focus { border-color: var(--primary); }
     session: store.get("session", null),
     authMode: "login",
     authNick: "",
+    authAvatar: 0,
     mood: store.get("mood", 2),
-    signal: store.get("signal", "red"),
+    signal: store.get("signal", null),
+    cita: store.get("cita", null),
     posts: store.get("posts", [
-      { id: 1, animal: "Gato", emoji: "🐱", bg: "#f6e3d6", time: "Hace 15 min", text: "Hoy me costó concentrarme en clase. Salí a caminar un rato y me sentí más tranquilo.", likes: 12, liked: false },
-      { id: 2, animal: "Perrito", emoji: "🐶", bg: "#efe0d2", time: "Hace 42 min", text: "A veces siento que todos tienen todo claro menos yo. ¿A alguien más le pasa? Me ayuda saber que no soy el único.", likes: 24, liked: true },
-      { id: 3, animal: "Pingüino", emoji: "🐧", bg: "#e3e5f7", time: "Hace 1 h", text: "Le conté a alguien cómo me sentía. Me dio nervios, pero me alegra haber dado ese pequeño paso. 💜", likes: 18, liked: false }
+      { id: 1, animal: "Gato", emoji: "🐱", bg: "#f6e3d6", time: "Hace 15 min", text: "Hoy me costó concentrarme en clase. Salí a caminar un rato y me sentí más tranquilo.", likes: 12, liked: false, reacts: { yo: 5, animo: 3 }, mine: [] },
+      { id: 2, animal: "Perrito", emoji: "🐶", bg: "#efe0d2", time: "Hace 42 min", text: "A veces siento que todos tienen todo claro menos yo. ¿A alguien más le pasa? Me ayuda saber que no soy el único.", likes: 24, liked: true, reacts: { yo: 9, animo: 6 }, mine: [] },
+      { id: 3, animal: "Pingüino", emoji: "🐧", bg: "#e3e5f7", time: "Hace 1 h", text: "Le conté a alguien cómo me sentía. Me dio nervios, pero me alegra haber dado ese pequeño paso. 💜", likes: 18, liked: false, reacts: { yo: 4, animo: 7 }, mine: [] }
     ])
   };
+  let pendingCita = { day: null, time: null };
 
   const MOODS = [
     { e: "😔", l: "Muy mal" }, { e: "🙁", l: "Mal" }, { e: "😐", l: "Regular" },
     { e: "🙂", l: "Bien" }, { e: "😄", l: "Muy bien" }
   ];
   const SIGNALS = [
-    { k: "green", t: "No necesito hablar con nadie", },
+    { k: "green", t: "No necesito hablar con nadie" },
     { k: "yellow", t: "Quizá hable con alguien" },
     { k: "red", t: "Quiero hablar con el psicólogo" }
   ];
-  const ANIMALS = [
-    { n: "Zorrito", e: "🦊", bg: "#fbe3d3" }, { n: "Osito", e: "🐻", bg: "#efe0d2" },
-    { n: "Conejo", e: "🐰", bg: "#f3e4ee" }, { n: "Búho", e: "🦉", bg: "#e8e3f7" },
-    { n: "Panda", e: "🐼", bg: "#e6ecf4" }
-  ];
+
+  /* Garantiza que publicaciones guardadas antes tengan reacciones */
+  function rx(p) {
+    p.reacts = p.reacts || { yo: 0, animo: 0 };
+    p.mine = p.mine || [];
+    return p;
+  }
+
+  const DOW = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
+  const MES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+  function nextDays(n) {
+    const out = [], d = new Date();
+    while (out.length < n) {
+      d.setDate(d.getDate() + 1);
+      if (d.getDay() !== 0 && d.getDay() !== 6) out.push(new Date(d));
+    }
+    return out;
+  }
+  const dayLabel = d => `${DOW[d.getDay()]} ${d.getDate()} ${MES[d.getMonth()]}`;
 
   /* ---------- Pantallas ---------- */
   const views = {
     auth() {
       const reg = state.authMode === "register";
+      const hero = reg ? AVATARS[state.authAvatar] : AVATARS[0];
       return `
         <div class="auth">
           <div class="auth-hero">
-            <div class="avatar lg" style="background:#fbe3d3">🦊</div>
+            <div class="avatar lg" style="background:${hero.bg}">${hero.e}</div>
             <span class="brand big">${icon("brand", 18, 1.8)} refugio</span>
             <h1>${reg ? "Crea tu espacio" : "Qué bueno verte"}</h1>
-            <p class="subtle">${reg ? "No necesitas datos reales. Solo elige un apodo." : "Entra a tu espacio seguro. Aquí nadie te juzga."}</p>
+            <p class="subtle">${reg ? "No necesitas datos reales. Elige un apodo y un avatar." : "Entra a tu espacio seguro. Aquí nadie te juzga."}</p>
           </div>
 
           <form class="card auth-card" data-form="auth" novalidate>
@@ -447,6 +504,14 @@ textarea:focus, .input:focus { border-color: var(--primary); }
               <label for="f-apodo">${reg ? "Elige un apodo con el que te sientas cómodo" : "Tu apodo"}</label>
               <input class="input" id="f-apodo" name="apodo" type="text" placeholder="${reg ? "Por ejemplo: Luna, Gato, Sol…" : "Escribe tu apodo"}" autocomplete="username" maxlength="24" value="${esc(state.authNick)}" />
             </div>
+            ${reg ? `
+            <div class="field">
+              <label>Elige tu avatar</label>
+              <div class="avatars">
+                ${AVATARS.map((a, i) => `
+                  <button type="button" class="av ${state.authAvatar === i ? "active" : ""}" style="background:${a.bg}" data-action="pickAvatar" data-i="${i}" aria-label="${a.n}">${a.e}</button>`).join("")}
+              </div>
+            </div>` : ""}
             <div class="field">
               <label for="f-clave">Contraseña</label>
               <div class="pw">
@@ -469,10 +534,11 @@ textarea:focus, .input:focus { border-color: var(--primary); }
     },
 
     inicio() {
+      const av = avatarOf(state.session);
       return `
         <div class="header">
           <h1>Inicio</h1>
-          <div class="hello"><span class="name">Hola${state.session && state.session.name ? ", " + esc(state.session.name.split(" ")[0]) : ","}</span> <div class="avatar" style="background:#f3dccb">🦊</div></div>
+          <div class="hello"><span class="name">Hola${state.session && state.session.name ? ", " + esc(state.session.name.split(" ")[0]) : ","}</span> <div class="avatar" style="background:${av.bg}">${av.e}</div></div>
         </div>
 
         <section class="card">
@@ -523,8 +589,17 @@ textarea:focus, .input:focus { border-color: var(--primary); }
                 ${state.signal === s.k ? `<span class="check">${icon("check", 14, 2.6)}</span>` : ""}
               </button>`).join("")}
           </div>
-          <button class="btn" data-action="chat">${icon("chat", 18, 2)} Iniciar Chat Privado</button>
+          <div class="stack">
+            <button class="btn" data-action="chat">${icon("chat", 18, 2)} Iniciar Chat Privado</button>
+            ${state.signal === "red" ? `<button class="btn ghost appear" data-action="cita">${icon("calendar", 18, 2)} Pedir cita</button>` : ""}
+          </div>
+          <div class="hours">${icon("clock", 13, 2)} Atención: ${HORARIO}</div>
           <div class="note">${icon("heart", 13, 2)} Puedes cambiar de idea cuando quieras.</div>
+          <div class="privacy">
+            <div>${icon("shield", 14, 2)} <span>Tu estado es 100% privado y confidencial.</span></div>
+            <div>${icon("heart", 14, 2)} <span>No avisamos a nadie, tú decides cuándo pedir la cita.</span></div>
+          </div>
+          <button class="link-btn center-btn" data-action="clearSignal">Prefiero no usar el semáforo hoy</button>
         </section>
 
         <div class="grid2">
@@ -542,6 +617,7 @@ textarea:focus, .input:focus { border-color: var(--primary); }
     },
 
     comunidad() {
+      state.posts.forEach(rx);
       return `
         <div class="header">
           <h1>Comunidad</h1>
@@ -554,10 +630,14 @@ textarea:focus, .input:focus { border-color: var(--primary); }
           <article class="post">
             <div class="post-head">
               <div class="avatar sm" style="background:${p.bg}">${p.emoji}</div>
-              <div class="who"><b>Anónimo · ${p.animal}</b><small>${p.time}</small></div>
+              <div class="who"><b>Anónimo · ${esc(p.animal)}</b><small>${p.time}</small></div>
               <button aria-label="Más opciones" style="color:var(--muted)" data-action="toast" data-msg="Gracias por cuidar la comunidad">${icon("more", 18)}</button>
             </div>
-            <p>${p.text.replace(/</g, "&lt;")}</p>
+            <p>${esc(p.text)}</p>
+            <div class="reacts">
+              <button class="chip ${p.mine.includes("yo") ? "on" : ""}" data-action="react" data-id="${p.id}" data-k="yo">🙋 Yo también · ${p.reacts.yo}</button>
+              <button class="chip ${p.mine.includes("animo") ? "on" : ""}" data-action="react" data-id="${p.id}" data-k="animo">💪 Ánimo · ${p.reacts.animo}</button>
+            </div>
             <div class="post-foot">
               <button class="${p.liked ? "liked" : ""}" data-action="like" data-id="${p.id}">${icon("heart", 15, 1.8)} Me gusta · ${p.likes}</button>
               <button data-action="comment" data-id="${p.id}">${icon("comment", 15, 1.8)} Comentar${p.comments ? " · " + p.comments : ""}</button>
@@ -567,6 +647,7 @@ textarea:focus, .input:focus { border-color: var(--primary); }
     },
 
     apoyo() {
+      const c = state.cita;
       return `
         <div class="header">
           <h1>Apoyo</h1>
@@ -582,9 +663,19 @@ textarea:focus, .input:focus { border-color: var(--primary); }
             <span class="ico">${icon("chat", 18)}</span>
             <div><b>Habla con el psicólogo</b><span>Apoyo de tu centro educativo</span></div>
           </div>
+          ${c ? `
+          <div class="cita-banner">
+            ${icon("calendar", 18, 2)}
+            <span>Tu cita: <b>${esc(c.day)} · ${esc(c.time)}</b></span>
+            <button class="link-btn" data-action="cancelCita">Cancelar</button>
+          </div>` : ""}
           <p class="desc" style="margin-bottom:14px">Puedes empezar con un «hola». Comparte solo lo que te resulte cómodo, a tu ritmo.</p>
-          <button class="btn" data-action="chat">${icon("chat", 17, 2)} Iniciar Chat Privado</button>
-          <p class="subtle" style="font-size:11px;margin-top:12px;line-height:1.45">Antes de empezar, consulta cómo se cuida tu información y los horarios de atención.</p>
+          <div class="stack">
+            <button class="btn" data-action="chat">${icon("chat", 17, 2)} Iniciar Chat Privado</button>
+            <button class="btn ghost" data-action="cita">${icon("calendar", 17, 2)} ${c ? "Cambiar cita" : "Pedir cita"}</button>
+          </div>
+          <div class="hours">${icon("clock", 13, 2)} Atención: ${HORARIO}</div>
+          <p class="subtle" style="font-size:11px;margin-top:10px;line-height:1.45">Tu información es privada. No se comparte nada de forma automática: tú decides qué contar y cuándo.</p>
         </section>
 
         <h3 class="section-title">Otras formas de dar el primer paso</h3>
@@ -619,7 +710,9 @@ textarea:focus, .input:focus { border-color: var(--primary); }
 
   function render() {
     const logged = !!state.session;
+    const st = $screen.scrollTop;
     $screen.innerHTML = logged ? views[state.tab]() : views.auth();
+    $screen.scrollTop = st;
     $tabbar.style.display = logged ? "" : "none";
     $tabbar.innerHTML = !logged ? "" : TABS.map(t => `
       <button class="tab ${state.tab === t.k ? "active" : ""}" data-action="go" data-tab="${t.k}" aria-label="${t.l}">
@@ -665,7 +758,8 @@ textarea:focus, .input:focus { border-color: var(--primary); }
         <input class="input" id="chatText" placeholder="Escribe un «hola»..." autocomplete="off" />
         <button class="send" id="chatSend" aria-label="Enviar">${icon("send", 18, 2)}</button>
       </div>
-      <p class="subtle" style="font-size:11px;margin-top:10px">Demo: este chat no está conectado a ningún psicólogo real.</p>`,
+      <div class="hours">${icon("clock", 13, 2)} Atención: ${HORARIO}</div>
+      <p class="subtle" style="font-size:11px;margin-top:8px">Demo: este chat no está conectado a ningún psicólogo real.</p>`,
       root => {
         const chat = root.querySelector("#chat");
         const input = root.querySelector("#chatText");
@@ -735,6 +829,49 @@ textarea:focus, .input:focus { border-color: var(--primary); }
     $overlay.classList.add("center");
   }
 
+  /* Pedir cita: elegir día y hora con el psicólogo */
+  function openCita() {
+    pendingCita = { day: null, time: null };
+    sheet("Pedir cita", `
+      <p class="subtle" style="margin:-4px 0 6px;line-height:1.45">Elige un día y una hora con el psicólogo de tu centro. Tú decides qué contarle; no avisamos a nadie más.</p>
+      <p class="chips-label">Día</p>
+      <div class="chips">
+        ${nextDays(5).map(dt => { const l = dayLabel(dt); return `<button class="chip day" data-action="pickDay" data-label="${l}">${l}</button>`; }).join("")}
+      </div>
+      <p class="chips-label">Hora</p>
+      <div class="chips">
+        ${TIMES.map(t => `<button class="chip" data-action="pickTime" data-t="${t}">${t}</button>`).join("")}
+      </div>
+      <button class="btn" data-action="confirmCita" disabled>Confirmar cita</button>
+      <div class="hours">${icon("clock", 13, 2)} Atención: ${HORARIO}</div>`);
+  }
+
+  function selectChip(el) {
+    $overlay.querySelectorAll('[data-action="' + el.dataset.action + '"]').forEach(b => b.classList.toggle("on", b === el));
+    const ok = $overlay.querySelector('[data-action="confirmCita"]');
+    if (ok) ok.disabled = !(pendingCita.day && pendingCita.time);
+  }
+
+  /* Aviso breve de privacidad en el primer ingreso */
+  function openPrivacy() {
+    store.set("privacyIntroSeen", true);
+    const li = t => `<li><span class="check">${icon("check", 12, 3)}</span><span>${t}</span></li>`;
+    sheet("Tu espacio es privado", `
+      <ul class="checklist">
+        ${li("Lo que marcas y escribes aquí es tuyo.")}
+        ${li("No avisamos a nadie. Tú decides qué compartes con el psicólogo y cuándo.")}
+        ${li("Puedes usar un apodo y un avatar. No pedimos datos reales.")}
+        ${li("El semáforo es opcional: úsalo solo si te sirve.")}
+      </ul>
+      <button class="btn" data-action="close">Entendido</button>`);
+    $overlay.classList.add("center");
+  }
+  function maybePrivacy() {
+    if (state.session && !store.get("privacyIntroSeen", false)) {
+      setTimeout(() => { if (state.session && $overlay.hidden) openPrivacy(); }, 500);
+    }
+  }
+
   /* ---------- Eventos ---------- */
   document.addEventListener("click", e => {
     const el = e.target.closest("[data-action]");
@@ -744,9 +881,19 @@ textarea:focus, .input:focus { border-color: var(--primary); }
       case "go": go(d.tab); break;
       case "mood": state.mood = +d.i; store.set("mood", state.mood); render(); break;
       case "signal": state.signal = d.k; store.set("signal", d.k); render(); break;
+      case "clearSignal":
+        state.signal = null; store.set("signal", null); render();
+        toast("Listo, el semáforo queda sin elegir"); break;
       case "like": {
         const p = state.posts.find(x => x.id === +d.id);
         p.liked = !p.liked; p.likes += p.liked ? 1 : -1;
+        store.set("posts", state.posts); render(); break;
+      }
+      case "react": {
+        const p = rx(state.posts.find(x => x.id === +d.id));
+        const on = p.mine.includes(d.k);
+        p.mine = on ? p.mine.filter(k => k !== d.k) : p.mine.concat(d.k);
+        p.reacts[d.k] += on ? -1 : 1;
         store.set("posts", state.posts); render(); break;
       }
       case "chat": openChat(); break;
@@ -760,8 +907,8 @@ textarea:focus, .input:focus { border-color: var(--primary); }
       case "publish": {
         const v = document.getElementById("postText").value.trim();
         if (!v) return;
-        const a = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
-        state.posts.unshift({ id: Date.now(), animal: a.n, emoji: a.e, bg: a.bg, time: "Ahora", text: v, likes: 0, liked: false });
+        const a = avatarOf(state.session);
+        state.posts.unshift({ id: Date.now(), animal: a.n, emoji: a.e, bg: a.bg, time: "Ahora", text: v, likes: 0, liked: false, reacts: { yo: 0, animo: 0 }, mine: [] });
         store.set("posts", state.posts);
         closeSheet(); render(); toast("Gracias por compartir 💜"); break;
       }
@@ -770,15 +917,22 @@ textarea:focus, .input:focus { border-color: var(--primary); }
         state.authNick = em ? em.value : "";
         state.authMode = d.mode; render(); break;
       }
+      case "pickAvatar": {
+        state.authAvatar = +d.i;
+        document.querySelectorAll('[data-action="pickAvatar"]').forEach(b => b.classList.toggle("active", b === el));
+        const hero = document.querySelector(".auth-hero .avatar");
+        if (hero) { hero.textContent = AVATARS[state.authAvatar].e; hero.style.background = AVATARS[state.authAvatar].bg; }
+        break;
+      }
       case "togglePw": {
         const pw = document.querySelector('form[data-form="auth"] [name="clave"]');
         if (pw) pw.type = pw.type === "password" ? "text" : "password";
         break;
       }
-      case "guest": startSession({ name: "", guest: true }); break;
+      case "guest": startSession({ name: "", guest: true, avatar: 0 }); break;
       case "logout":
         state.session = null; store.set("session", null);
-        state.authMode = "login"; state.authNick = ""; state.tab = "inicio";
+        state.authMode = "login"; state.authNick = ""; state.authAvatar = 0; state.tab = "inicio";
         render(); break;
       case "comment": openComment(d.id); break;
       case "sendComment": {
@@ -797,6 +951,18 @@ textarea:focus, .input:focus { border-color: var(--primary); }
       case "survey":
         store.set("survey", { value: MOODS[+d.i].l, at: new Date().toISOString() });
         closeSheet(); toast("¡Gracias por contarnos!"); break;
+      case "cita":
+        if (state.tab !== "apoyo") go("apoyo");
+        openCita(); break;
+      case "pickDay": pendingCita.day = d.label; selectChip(el); break;
+      case "pickTime": pendingCita.time = d.t; selectChip(el); break;
+      case "confirmCita":
+        if (!(pendingCita.day && pendingCita.time)) return;
+        state.cita = { day: pendingCita.day, time: pendingCita.time };
+        store.set("cita", state.cita);
+        closeSheet(); render(); toast("Listo, tu cita quedó pedida 💜"); break;
+      case "cancelCita":
+        state.cita = null; store.set("cita", null); render(); toast("Cita cancelada"); break;
       case "toast": toast(d.msg); break;
       case "close": closeSheet(); break;
     }
@@ -805,6 +971,7 @@ textarea:focus, .input:focus { border-color: var(--primary); }
   function startSession(s) {
     state.session = s; store.set("session", s);
     state.tab = "inicio"; render(); $screen.scrollTop = 0;
+    maybePrivacy();
   }
 
   document.addEventListener("submit", async e => {
@@ -821,13 +988,13 @@ textarea:focus, .input:focus { border-color: var(--primary); }
     if (state.authMode === "register") {
       if (pass.length < 4) return fail("La contraseña debe tener al menos 4 caracteres.");
       if (users[key]) return fail("Ese apodo ya existe. Prueba con otro o inicia sesión.");
-      users[key] = { name: nick, hash: await sha(pass) };
+      users[key] = { name: nick, hash: await sha(pass), avatar: state.authAvatar };
       store.set("users", users);
-      startSession({ name: nick });
+      startSession({ name: nick, avatar: state.authAvatar });
     } else {
       const u = users[key];
       if (!u || u.hash !== await sha(pass)) return fail("Apodo o contraseña incorrectos.");
-      startSession({ name: u.name });
+      startSession({ name: u.name, avatar: Number.isInteger(u.avatar) ? u.avatar : 0 });
     }
   });
 
@@ -842,6 +1009,7 @@ textarea:focus, .input:focus { border-color: var(--primary); }
   tick(); setInterval(tick, 30000);
 
   render();
+  maybePrivacy();
 })();
 
 </script>
