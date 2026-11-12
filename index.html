@@ -33,7 +33,7 @@
 
 html, body {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   background: var(--bg);
   color: var(--ink);
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -175,7 +175,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     padding: 36px 32px 60px;
   }
 
-  /* Tarjetas más amplias en escritorio */
   .card {
     padding: 22px;
     border: 2px solid var(--line);
@@ -560,7 +559,6 @@ select.input { appearance:auto; }
 (function () {
   "use strict";
 
-  /* ---------- Iconos (SVG de trazo) ---------- */
   const P = {
     home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
     users: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.2a3.2 3.2 0 0 1 0 5.8"/><path d="M18 14.3c1.8.8 3 2.6 3 4.7"/>',
@@ -587,7 +585,7 @@ select.input { appearance:auto; }
     clock: '<circle cx="12" cy="12" r="8.500"/><path d="M12 7.500V12l3 2"/>',
     calendar: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'
   };
-  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   async function sha(s) {
     try {
       const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
@@ -595,7 +593,7 @@ select.input { appearance:auto; }
     } catch (e) { return btoa(unescape(encodeURIComponent(s))); }
   }
   const icon = (n, s = 18, sw = 1.8, extra = "") =>
-    `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" ${extra}>${P[n]}</svg>`;
+    `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" ${extra}>${P[n] || ""}</svg>`;
 
   /* ---------- Configuración editable ---------- */
   const HORARIO = "Lunes a viernes · 8:00 a. m. – 1:00 p. m.";
@@ -620,20 +618,23 @@ select.input { appearance:auto; }
     set(k, v) { try { localStorage.setItem("refugio:" + k, JSON.stringify(v)); } catch (e) {} }
   };
 
+  const DEFAULT_POSTS = [
+    { id: 1, animal: "Gato", emoji: "🐱", bg: "#f6e3d6", time: "Hace 15 min", text: "Hoy me costó concentrarme en clase. Salí a caminar un rato y me sentí más tranquilo.", likes: 12, liked: false, reacts: { yo: 5, animo: 3 }, mine: [] },
+    { id: 2, animal: "Perrito", emoji: "🐶", bg: "#efe0d2", time: "Hace 42 min", text: "A veces siento que todos tienen todo claro menos yo. ¿A alguien más le pasa? Me ayuda saber que no soy el único.", likes: 24, liked: true, reacts: { yo: 9, animo: 6 }, mine: [] },
+    { id: 3, animal: "Pingüino", emoji: "🐧", bg: "#e3e5f7", time: "Hace 1 h", text: "Le conté a alguien cómo me sentía. Me dio nervios, pero me alegra haber dado ese pequeño paso. 💜", likes: 18, liked: false, reacts: { yo: 4, animo: 7 }, mine: [] }
+  ];
+
+  const savedPosts = store.get("posts", DEFAULT_POSTS);
   const state = {
     tab: "inicio",
     session: store.get("session", null),
     authMode: "login",
     authNick: "",
     authAvatar: 0,
-    mood: store.get("mood", 2),
+    mood: Number.isInteger(store.get("mood", 2)) ? store.get("mood", 2) : 2,
     signal: store.get("signal", null),
     cita: store.get("cita", null),
-    posts: store.get("posts", [
-      { id: 1, animal: "Gato", emoji: "🐱", bg: "#f6e3d6", time: "Hace 15 min", text: "Hoy me costó concentrarme en clase. Salí a caminar un rato y me sentí más tranquilo.", likes: 12, liked: false, reacts: { yo: 5, animo: 3 }, mine: [] },
-      { id: 2, animal: "Perrito", emoji: "🐶", bg: "#efe0d2", time: "Hace 42 min", text: "A veces siento que todos tienen todo claro menos yo. ¿A alguien más le pasa? Me ayuda saber que no soy el único.", likes: 24, liked: true, reacts: { yo: 9, animo: 6 }, mine: [] },
-      { id: 3, animal: "Pingüino", emoji: "🐧", bg: "#e3e5f7", time: "Hace 1 h", text: "Le conté a alguien cómo me sentía. Me dio nervios, pero me alegra haber dado ese pequeño paso. 💜", likes: 18, liked: false, reacts: { yo: 4, animo: 7 }, mine: [] }
-    ])
+    posts: Array.isArray(savedPosts) ? savedPosts : DEFAULT_POSTS
   };
   let pendingCita = { day: null, time: null };
 
@@ -648,8 +649,9 @@ select.input { appearance:auto; }
   ];
 
   function rx(p) {
+    if (!p || typeof p !== "object") return { reacts: { yo: 0, animo: 0 }, mine: [] };
     p.reacts = p.reacts || { yo: 0, animo: 0 };
-    p.mine = p.mine || [];
+    p.mine = Array.isArray(p.mine) ? p.mine : [];
     return p;
   }
 
@@ -717,10 +719,13 @@ select.input { appearance:auto; }
 
     inicio() {
       const av = avatarOf(state.session);
+      const userName = state.session && typeof state.session.name === "string" && state.session.name.trim()
+        ? ", " + esc(state.session.name.trim().split(" ")[0])
+        : ",";
       return `
         <div class="header">
           <h1>Inicio</h1>
-          <div class="hello"><span class="name">Hola${state.session && state.session.name ? ", " + esc(state.session.name.split(" ")[0]) : ","}</span> <div class="avatar" style="background:${av.bg}">${av.e}</div></div>
+          <div class="hello"><span class="name">Hola${userName}</span> <div class="avatar" style="background:${av.bg}">${av.e}</div></div>
         </div>
 
         <section class="card">
@@ -882,7 +887,6 @@ select.input { appearance:auto; }
     }
   };
 
-  /* Panel lateral derecho para pantallas grandes (Estilo Duolingo) */
   function renderRightRail() {
     const c = state.cita;
     const sigLabels = {
@@ -893,7 +897,7 @@ select.input { appearance:auto; }
     return `
       <div class="rail-card">
         <h3><span style="color:var(--primary)">${icon("bell", 18, 2)}</span> Semáforo de Apoyo</h3>
-        <p>${state.signal ? `Estado actual: <b>${sigLabels[state.signal]}</b>` : "Marca de forma privada cómo te sientes respecto a hablar hoy."}</p>
+        <p>${state.signal && sigLabels[state.signal] ? `Estado actual: <b>${sigLabels[state.signal]}</b>` : "Marca de forma privada cómo te sientes respecto a hablar hoy."}</p>
         <div class="semaforo" style="margin:8px 0 12px">
           ${SIGNALS.map(s => `
             <button class="opt ${s.k} ${state.signal === s.k ? "active" : ""}" style="padding:10px 12px;font-size:12.5px" data-action="signal" data-k="${s.k}">
@@ -923,7 +927,7 @@ select.input { appearance:auto; }
     { k: "perfil", l: "Mi espacio", i: "user" }
   ];
 
-  /* ---------- Render ---------- */
+  /* ---------- Render Seguro ---------- */
   const $screen = document.getElementById("screen");
   const $tabbar = document.getElementById("tabbar");
   const $rightRail = document.getElementById("rightRail");
@@ -931,33 +935,41 @@ select.input { appearance:auto; }
   const $app = document.getElementById("app");
 
   function render() {
-    const logged = !!state.session;
-    const isAppView = logged && !state.psi;
-    const st = $screen.scrollTop;
+    try {
+      const logged = !!(state.session && typeof state.session === "object");
+      const isAppView = logged && !state.psi;
+      if (!views[state.tab]) state.tab = "inicio";
 
-    $app.classList.toggle("logged-in", isAppView);
-    $app.classList.toggle("auth-view", !logged && !state.psi);
+      $app.classList.toggle("logged-in", isAppView);
+      $app.classList.toggle("auth-view", !logged && !state.psi);
 
-    $screen.innerHTML = state.psi ? views.psi() : logged ? views[state.tab]() : views.auth();
-    $screen.scrollTop = st;
+      const st = $screen.scrollTop;
+      $screen.innerHTML = state.psi ? views.psi() : logged ? views[state.tab]() : views.auth();
+      $screen.scrollTop = st;
 
-    $tabbar.style.display = isAppView ? "" : "none";
-    $tabbar.innerHTML = !isAppView ? "" : `
-      <div class="sidebar-brand" id="clock">${icon("brand", 24, 2.2)} refugio</div>
-      ${TABS.map(t => `
-        <button class="tab ${state.tab === t.k ? "active" : ""}" data-action="go" data-tab="${t.k}" aria-label="${t.l}">
-          <span class="pill">${icon(t.i, 22, 2)}</span><span>${t.l}</span>
-        </button>`).join("")}
-    `;
+      $tabbar.style.display = isAppView ? "" : "none";
+      $tabbar.innerHTML = !isAppView ? "" : `
+        <div class="sidebar-brand" id="clock">${icon("brand", 24, 2.2)} refugio</div>
+        ${TABS.map(t => `
+          <button class="tab ${state.tab === t.k ? "active" : ""}" data-action="go" data-tab="${t.k}" aria-label="${t.l}">
+            <span class="pill">${icon(t.i, 22, 2)}</span><span>${t.l}</span>
+          </button>`).join("")}
+      `;
 
-    if ($rightRail) {
-      $rightRail.style.display = isAppView ? "" : "none";
-      $rightRail.innerHTML = isAppView ? renderRightRail() : "";
+      if ($rightRail) {
+        $rightRail.style.display = isAppView ? "" : "none";
+        $rightRail.innerHTML = isAppView ? renderRightRail() : "";
+      }
+    } catch (err) {
+      localStorage.clear();
+      state.session = null;
+      state.tab = "inicio";
+      $screen.innerHTML = views.auth();
     }
   }
 
   function go(tab) {
-    state.tab = tab;
+    state.tab = views[tab] ? tab : "inicio";
     render();
     window.scrollTo({ top: 0, behavior: "smooth" });
     $screen.scrollTop = 0;
@@ -1082,9 +1094,11 @@ select.input { appearance:auto; }
 
   function semaforoAgg() {
     const ev = store.get("events", []), by = {}, r = { green: 0, yellow: 0, red: 0 };
-    ev.forEach(x => { if (x.e === "semaforo" && x.d !== "no_usar") by[x.s] = x.d; });
+    if (Array.isArray(ev)) {
+      ev.forEach(x => { if (x && x.e === "semaforo" && x.d !== "no_usar") by[x.s] = x.d; });
+    }
     Object.values(by).forEach(k => { if (r[k] !== undefined) r[k]++; });
-    if (!ev.length && state.signal) r[state.signal]++;
+    if ((!Array.isArray(ev) || !ev.length) && state.signal && r[state.signal] !== undefined) r[state.signal]++;
     return r;
   }
 
@@ -1176,11 +1190,14 @@ select.input { appearance:auto; }
         toast("Listo, el semáforo queda sin elegir"); break;
       case "like": {
         const p = state.posts.find(x => x.id === +d.id);
+        if (!p) break;
         p.liked = !p.liked; p.likes += p.liked ? 1 : -1;
         store.set("posts", state.posts); render(); break;
       }
       case "react": {
-        const p = rx(state.posts.find(x => x.id === +d.id));
+        const found = state.posts.find(x => x.id === +d.id);
+        if (!found) break;
+        const p = rx(found);
         const on = p.mine.includes(d.k);
         p.mine = on ? p.mine.filter(k => k !== d.k) : p.mine.concat(d.k);
         p.reacts[d.k] += on ? -1 : 1;
@@ -1230,6 +1247,7 @@ select.input { appearance:auto; }
         const txt = d.text;
         if (!txt) return;
         const p = state.posts.find(x => x.id === +d.id);
+        if (!p) break;
         p.cmts = (p.cmts || []).concat(txt);
         p.comments = (p.comments || 0) + 1;
         store.set("posts", state.posts);
