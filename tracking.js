@@ -52,6 +52,10 @@
           if (v && v.value.trim()) track("publicacion"); break;
         case "survey": track("encuesta", MOODS[+d.i]); break;
         case "cita": track("cita_abrir"); break;
+        case "gustos": track("gustos_abrir"); break;
+        case "addGusto": track("gusto_agregar"); break;
+        case "psiApprove": track("psi_aprobar"); break;
+        case "psiReject": track("psi_rechazar"); break;
         case "confirmCita": track("cita_confirmar"); break;
         case "cancelCita": track("cita_cancelar"); break;
         case "chat": track("chat_abrir"); break;
@@ -125,7 +129,7 @@
     var am = MOODS.map(function (m) { return m + ": " + (ani[m] || 0); }).join(" · ");
     return "<h4 style='font-size:13px;margin:14px 0 4px'>Vista del colegio (datos anónimos)</h4>" +
       "<p style='line-height:1.6'>Semáforo: 🟢 " + sem.green + " · 🟡 " + sem.yellow + " · 🔴 " + sem.red +
-      "<br>Ánimo: " + am + "<br>Citas pedidas: " + citas + " · Alertas de riesgo: " + alertas + "</p>";
+      "<br>Colegios interesados (este dispositivo): " + (function () { try { return (JSON.parse(localStorage.getItem("refugio:leads")) || []).length; } catch (e) { return 0; } })() + "<br>Ánimo: " + am + "<br>Citas pedidas: " + citas + " · Alertas de riesgo: " + alertas + "</p>";
   }
 
   /* ---------- Panel de facilitador ---------- */
