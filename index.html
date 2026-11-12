@@ -310,4 +310,1015 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .pause small { font-size: 11px; letter-spacing: 0.6px; color: #9a7a68; font-weight: 700; }
 .pause h3 { font-size: 23px; font-weight: 700; line-height: 1.15; margin: 6px 0 14px; max-width: 220px; }
-.pause .link { color: var(--primary); font-size:
+.pause .link { color: var(--primary); font-size: 14px; font-weight: 700; display: inline-flex; gap: 6px; align-items: center; }
+.pause .art {
+  position: absolute; right: 8px; bottom: -10px; font-size: 98px;
+  filter: drop-shadow(0 8px 10px rgba(150, 100, 70, 0.25));
+}
+
+.row-card {
+  display: flex; align-items: center; gap: 14px; width: 100%;
+  background: var(--card); border-radius: 16px; padding: 16px;
+  box-shadow: var(--shadow); text-align: left; margin-bottom: 12px;
+  transition: transform 0.15s, border-color 0.2s;
+}
+.row-card:hover { transform: translateY(-1px); }
+.row-card .ico {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: var(--primary-soft); color: var(--primary);
+  display: grid; place-items: center; flex-shrink: 0;
+}
+.row-card .txt { flex: 1; }
+.row-card .txt b { display: block; font-size: 14.5px; font-weight: 600; }
+.row-card .txt span { font-size: 12.5px; color: var(--muted); }
+.row-card .chev { color: #a5a9c4; }
+
+/* ---------- Semáforo ---------- */
+.semaforo { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
+.opt {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 15px 16px; border-radius: 14px; font-size: 13.5px; font-weight: 500; text-align: left;
+  border: 2px solid transparent; transition: all 0.2s;
+}
+.opt.green { background: var(--green); }
+.opt.yellow { background: var(--yellow); }
+.opt.red { background: var(--red); }
+.opt.active { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(107, 111, 242, 0.12); font-weight: 600; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-left: 6px; vertical-align: middle; }
+.dot.green { background: var(--green-dot); }
+.dot.yellow { background: var(--yellow-dot); }
+.dot.red { background: var(--red-dot); }
+.check {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--primary); color: #fff;
+  display: grid; place-items: center;
+}
+
+.btn {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--primary); color: #fff;
+  padding: 14px 18px; border-radius: 14px;
+  font-size: 14px; font-weight: 600;
+  box-shadow: 0 4px 0 #4f53c9;
+  transition: transform 0.1s, background 0.2s, box-shadow 0.1s;
+}
+.btn:hover { background: var(--primary-dark); }
+.btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #4f53c9; }
+.btn.ghost { background: var(--primary-soft); color: var(--primary); box-shadow: 0 4px 0 #d5d8fb; }
+.btn.ghost:active { box-shadow: 0 2px 0 #d5d8fb; }
+
+.note { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.mini {
+  background: var(--card); border-radius: 16px; padding: 16px;
+  box-shadow: var(--shadow); text-align: left;
+  display: flex; flex-direction: column; gap: 8px;
+  transition: transform 0.15s;
+}
+.mini:hover { transform: translateY(-2px); }
+.mini .ico { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; }
+.mini .ico.a { background: #fdeee9; color: #e0705a; }
+.mini .ico.b { background: var(--primary-soft); color: var(--primary); }
+.mini b { font-size: 14.5px; font-weight: 600; }
+.mini span { font-size: 12px; color: var(--muted); line-height: 1.35; }
+
+/* ---------- Comunidad ---------- */
+.post { background: var(--card); border-radius: 18px; padding: 16px; box-shadow: var(--shadow); margin-bottom: 14px; }
+.post-head { display: flex; align-items: center; gap: 10px; }
+.post-head .who { flex: 1; font-size: 13px; }
+.post-head .who b { font-weight: 600; }
+.post-head .who small { display: block; font-size: 11px; color: var(--muted); }
+.post p { font-size: 14px; line-height: 1.55; margin: 12px 0; }
+.post-foot { display: flex; gap: 20px; border-top: 1px solid var(--line); padding-top: 10px; font-size: 12.5px; color: var(--muted); }
+.post-foot button { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.post-foot button.liked { color: var(--primary); font-weight: 600; }
+.post-foot button.liked svg { fill: var(--primary); }
+.share { display: flex; justify-content: center; margin-top: 6px; }
+.share button { color: var(--primary); font-size: 14px; font-weight: 600; display: inline-flex; gap: 6px; align-items: center; padding: 10px 16px; background: var(--primary-soft); border-radius: 14px; }
+
+/* ---------- Apoyo ---------- */
+.hero { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.hero h2 { font-size: 22px; font-weight: 700; }
+.urgent { background: #e8ecf8; border-radius: 16px; padding: 16px; font-size: 12.5px; line-height: 1.5; color: #4d5278; margin-top: 18px; }
+.urgent b { display: block; color: var(--ink); font-size: 14px; margin-bottom: 4px; }
+.top-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.top-row .ico { width: 38px; height: 38px; border-radius: 10px; background: var(--primary-soft); color: var(--primary); display: grid; place-items: center; }
+.top-row b { display: block; font-size: 15.5px; }
+.top-row span { font-size: 12.5px; color: var(--muted); }
+
+/* ---------- Modales (Adaptables Móvil y PC) ---------- */
+.overlay {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(34, 38, 74, 0.4);
+  display: flex; align-items: flex-end; justify-content: center;
+  backdrop-filter: blur(3px);
+}
+.overlay[hidden] { display: none; }
+.sheet {
+  width: 100%; max-width: 500px; background: #fff; border-radius: 26px 26px 0 0;
+  padding: 20px 22px 28px; max-height: 88vh; display: flex; flex-direction: column;
+  animation: up 0.25s ease both;
+}
+@media (min-width: 640px) {
+  .overlay { align-items: center; padding: 24px; }
+  .sheet { border-radius: 24px; box-shadow: 0 24px 60px rgba(20, 24, 60, 0.22); }
+}
+@keyframes up { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.sheet-head h3 { font-size: 18px; font-weight: 700; }
+.close { width: 34px; height: 34px; border-radius: 50%; background: #f1f2f9; display: grid; place-items: center; }
+textarea, .input {
+  width: 100%; border: 2px solid var(--line); border-radius: 14px;
+  padding: 12px 14px; font: inherit; font-size: 14px; resize: none; background: #fafbff; outline: none; color: var(--ink);
+}
+textarea:focus, .input:focus { border-color: var(--primary); background: #fff; }
+
+.chat { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; min-height: 220px; }
+.bubble { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.45; }
+.bubble.them { background: #f1f2fa; border-bottom-left-radius: 4px; align-self: flex-start; }
+.bubble.me { background: var(--primary); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
+.chat-input { display: flex; gap: 8px; }
+.chat-input .send { width: 48px; border-radius: 14px; background: var(--primary); color: #fff; display: grid; place-items: center; }
+
+.breath { display: grid; place-items: center; padding: 24px 0 14px; }
+.breath .circle {
+  width: 130px; height: 130px; border-radius: 50%;
+  background: radial-gradient(circle, #c9cbff, var(--primary));
+  animation: breathe 8s ease-in-out infinite;
+}
+@keyframes breathe { 0%, 100% { transform: scale(0.7); } 50% { transform: scale(1.15); } }
+.breath p { margin-top: 20px; font-size: 14px; color: var(--muted); }
+
+.toast {
+  position: fixed; left: 50%; bottom: 88px; transform: translateX(-50%);
+  background: #22264a; color: #fff; padding: 12px 20px; border-radius: 14px;
+  font-size: 13px; font-weight: 500; z-index: 60; animation: fade 0.25s ease both; white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(20, 24, 60, 0.25);
+}
+@media (min-width: 768px) {
+  .toast { bottom: 32px; }
+}
+
+/* ---------- Login / registro ---------- */
+.auth { display: flex; flex-direction: column; gap: 14px; padding-top: 4px; width: 100%; }
+.auth-hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; margin: 6px 0 4px; }
+.auth-hero h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.4px; margin-top: 4px; }
+.auth-hero .subtle { max-width: 300px; line-height: 1.45; font-size: 14px; }
+.brand.big { font-size: 16px; }
+.auth-card { margin: 0; display: flex; flex-direction: column; gap: 14px; padding: 22px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.pw { position: relative; }
+.pw .input { padding-right: 46px; }
+.pw .eye { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; display: grid; place-items: center; color: var(--muted); border-radius: 10px; }
+.auth-error { font-size: 12.5px; color: var(--red-dot); line-height: 1.4; }
+.auth-error:empty { display: none; }
+.link-btn { color: var(--primary); font-size: 13px; font-weight: 600; padding: 4px 6px; }
+.auth-card .link-btn { align-self: center; }
+.hello .name { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- Encuesta emergente ---------- */
+.overlay.center { align-items: center; justify-content: center; padding: 24px; }
+.overlay.center .sheet { border-radius: 24px; max-width: 380px; padding: 22px; animation: fade 0.25s ease both; }
+.overlay.center .sheet-head h3 { font-size: 18px; }
+.overlay.center .sheet .link-btn { display: block; }
+
+/* ---------- Componentes de Apoyo y Widgets ---------- */
+.stack { display: flex; flex-direction: column; gap: 10px; }
+.appear { animation: fade 0.3s ease both; }
+.btn:disabled { opacity: 0.45; box-shadow: none; cursor: not-allowed; }
+.hours { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-top: 12px; }
+.privacy { display: flex; flex-direction: column; gap: 7px; background: #f3f4ff; border-radius: 12px; padding: 12px 14px; margin-top: 12px; font-size: 12px; color: #4d5278; line-height: 1.4; }
+.privacy > div { display: flex; gap: 8px; align-items: flex-start; }
+.privacy svg { flex-shrink: 0; margin-top: 1px; color: var(--primary); }
+.center-btn { display: block; margin: 12px auto 0; color: var(--muted); font-weight: 500; }
+.avatars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.av { aspect-ratio: 1; border-radius: 16px; display: grid; place-items: center; font-size: 28px; border: 2.5px solid transparent; transition: all 0.15s; }
+.av.active { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(107, 111, 242, 0.14); transform: scale(1.04); }
+.reacts { display: flex; gap: 8px; margin: 0 0 12px; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; gap: 5px; padding: 7px 13px; border-radius: 999px; background: #f3f4fb; color: var(--muted); font-size: 12.5px; border: 1.5px solid transparent; transition: all 0.15s; }
+.chip.on { background: var(--primary-soft); color: var(--primary); border-color: var(--primary); font-weight: 600; }
+.chips-label { font-size: 12px; font-weight: 600; color: var(--muted); margin-top: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
+.chips .chip { padding: 9px 13px; font-size: 13px; }
+.chip.day { text-transform: capitalize; }
+.cita-banner { display: flex; align-items: center; gap: 10px; background: var(--primary-soft); color: #4a4eb8; border-radius: 14px; padding: 12px 14px; font-size: 13px; margin-bottom: 12px; }
+.cita-banner span { flex: 1; }
+.checklist { list-style: none; display: flex; flex-direction: column; gap: 11px; margin: 4px 0 18px; font-size: 13.5px; line-height: 1.4; }
+.checklist li { display: flex; gap: 10px; align-items: flex-start; }
+.checklist .check { width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px; }
+
+.badge { display:inline-block; font-size:11px; font-weight:600; color:#8a6a00; background:var(--yellow); border-radius:999px; padding:4px 10px; margin:10px 0 0; }
+.cmts { display:flex; flex-direction:column; gap:6px; margin:0 0 12px; }
+.cmts span { font-size:12.5px; color:var(--ink); background:#f3f4fb; border-radius:12px; padding:8px 12px; }
+.note-box { font-size:12px; color:#4d5278; background:#f3f4ff; border-radius:12px; padding:10px 12px; line-height:1.45; margin:4px 0 12px; }
+select.input { appearance:auto; }
+.psi-item { background:#fff; border: 2px solid var(--line); border-radius:16px; padding:14px; margin-bottom:10px; font-size:13.5px; line-height:1.45; }
+.psi-actions { display:flex; gap:8px; margin-top:10px; }
+.psi-actions .btn { padding:10px; font-size:13px; }
+.help-links { display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+.help-links a { display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; font-weight:600; font-size:13px; padding:11px; border-radius:12px; background:var(--primary); color:#fff; }
+.help-links a.alt { background:#fff; color:var(--primary); box-shadow:inset 0 0 0 1.5px var(--primary); }
+
+/* Tarjetas del Panel Lateral Derecho (Escritorio) */
+.rail-card {
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+.rail-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rail-card p {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.45;
+  margin-bottom: 12px;
+}
+</style>
+</head>
+<body>
+  <div class="phone" id="app">
+    <main class="screen" id="screen" aria-live="polite"></main>
+
+    <aside class="right-rail" id="rightRail" aria-label="Accesos directos de bienestar"></aside>
+
+    <nav class="tabbar" id="tabbar" aria-label="Navegación principal"></nav>
+
+    <div class="overlay" id="overlay" hidden></div>
+  </div>
+
+  <script>
+/* Refugio · app de bienestar emocional (demo estática adaptable) */
+(function () {
+  "use strict";
+
+  /* ---------- Iconos (SVG de trazo) ---------- */
+  const P = {
+    home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
+    users: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.2a3.2 3.2 0 0 1 0 5.8"/><path d="M18 14.3c1.8.8 3 2.6 3 4.7"/>',
+    heart: '<path d="M12 20s-7.5-4.6-9-9.2C2 7.600 4.200 5 7.100 5c1.900 0 3.700 1 4.900 2.800C13.200 6 15 5 16.900 5 19.800 5 22 7.600 21 10.800 19.500 15.400 12 20 12 20z"/>',
+    user: '<circle cx="12" cy="8" r="3.6"/><path d="M4.500 20c0-4 3.400-6.500 7.500-6.500s7.500 2.500 7.500 6.500"/>',
+    chat: '<path d="M21 12a8 8 0 0 1-11.600 7.100L4 20l1-4.600A8 8 0 1 1 21 12z"/>',
+    spark: '<path d="M12 3l1.800 5.200L19 10l-5.200 1.800L12 17l-1.800-5.200L5 10l5.200-1.800z"/><path d="M19 16l.7 1.800L21.500 18.500 19.700 19.200 19 21l-.7-1.800-1.800-.7 1.800-.7z"/>',
+    edit: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/>',
+    chev: '<path d="M9 6l6 6-6 6"/>',
+    pencil: '<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+    shield: '<path d="M12 3l8 3v6c0 4.500-3.200 8-8 9-4.800-1-8-4.500-8-9V6z"/>',
+    leaf: '<path d="M5 19c0-8 5-14 15-14 0 10-6 15-14 15"/><path d="M5 19c3-5 6-8 10-10"/>',
+    hearthand: '<path d="M12 20s-7-4.200-8.500-8.600C2.600 8.800 4.500 6.500 7 6.500c1.700 0 3.200.9 4.200 2.400.9-1.500 2.500-2.400 4.200-2.400 2.500 0 4.400 2.300 3.500 4.900C17.500 15.800 12 20 12 20z"/>',
+    comment: '<path d="M21 12a8 8 0 0 1-11.600 7.100L4 20l1-4.600A8 8 0 1 1 21 12z"/>',
+    more: '<circle cx="5" cy="12" r="1.200" fill="currentColor"/><circle cx="12" cy="12" r="1.200" fill="currentColor"/><circle cx="19" cy="12" r="1.200" fill="currentColor"/>',
+    check: '<path d="M5 12.500l4.500 4.500L19 7.500"/>',
+    x: '<path d="M6 6l12 12M18 6L6 18"/>',
+    send: '<path d="M4 12l16-8-6 16-2.500-6.500z"/>',
+    arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    bell: '<path d="M6 17V11a6 6 0 0 1 12 0v6l1.500 2h-15z"/>',
+    sprout: '<path d="M12 21v-9"/><path d="M12 12C12 8 9 6 5 6c0 4 2 6 7 6z"/><path d="M12 14c0-3 2.500-5 6-5 0 3-2 5-6 5z"/>',
+    brand: '<circle cx="7" cy="17" r="2"/><circle cx="17" cy="6" r="2"/><path d="M8.500 15.500C11 13 13 11 15.500 7.500"/><path d="M5 7c2 0 4 1 5 3"/>',
+    eye: '<path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    clock: '<circle cx="12" cy="12" r="8.500"/><path d="M12 7.500V12l3 2"/>',
+    calendar: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'
+  };
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  async function sha(s) {
+    try {
+      const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+      return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, "0")).join("");
+    } catch (e) { return btoa(unescape(encodeURIComponent(s))); }
+  }
+  const icon = (n, s = 18, sw = 1.8, extra = "") =>
+    `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" ${extra}>${P[n]}</svg>`;
+
+  /* ---------- Configuración editable ---------- */
+  const HORARIO = "Lunes a viernes · 8:00 a. m. – 1:00 p. m.";
+  const TIMES = ["8:00 a. m.", "9:30 a. m.", "11:00 a. m.", "12:30 p. m."];
+  const PSIS = [{ n: "Psic. Andrea Rojas", t: "Psicóloga del colegio" }, { n: "Psic. Luis Paredes", t: "Psicólogo del colegio" }];
+  const PSI_PIN = "2468";
+  const GRADOS = ["1.º de secundaria", "2.º de secundaria", "3.º de secundaria", "4.º de secundaria", "5.º de secundaria", "Prefiero no decirlo"];
+  const COMENTARIOS = ["Gracias por contarlo 💜", "No estás solo/a", "A mí también me pasa", "Qué valiente por compartirlo", "Paso a paso, tú puedes"];
+  const RIESGO = /suicid|matarme|quitarme la vida|quiero morir|no quiero vivir|cortarme|autolesion|hacerme da[nñ]o|acabar con todo/;
+
+  const AVATARS = [
+    { n: "Zorrito", e: "🦊", bg: "#fbe3d3" }, { n: "Osito", e: "🐻", bg: "#efe0d2" },
+    { n: "Gatito", e: "🐱", bg: "#f6e3d6" }, { n: "Perrito", e: "🐶", bg: "#efe0d2" },
+    { n: "Pingüino", e: "🐧", bg: "#e3e5f7" }, { n: "Conejo", e: "🐰", bg: "#f3e4ee" },
+    { n: "Búho", e: "🦉", bg: "#e8e3f7" }, { n: "Panda", e: "🐼", bg: "#e6ecf4" }
+  ];
+  const avatarOf = s => AVATARS[s && Number.isInteger(s.avatar) ? s.avatar : 0] || AVATARS[0];
+
+  /* ---------- Estado ---------- */
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem("refugio:" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem("refugio:" + k, JSON.stringify(v)); } catch (e) {} }
+  };
+
+  const state = {
+    tab: "inicio",
+    session: store.get("session", null),
+    authMode: "login",
+    authNick: "",
+    authAvatar: 0,
+    mood: store.get("mood", 2),
+    signal: store.get("signal", null),
+    cita: store.get("cita", null),
+    posts: store.get("posts", [
+      { id: 1, animal: "Gato", emoji: "🐱", bg: "#f6e3d6", time: "Hace 15 min", text: "Hoy me costó concentrarme en clase. Salí a caminar un rato y me sentí más tranquilo.", likes: 12, liked: false, reacts: { yo: 5, animo: 3 }, mine: [] },
+      { id: 2, animal: "Perrito", emoji: "🐶", bg: "#efe0d2", time: "Hace 42 min", text: "A veces siento que todos tienen todo claro menos yo. ¿A alguien más le pasa? Me ayuda saber que no soy el único.", likes: 24, liked: true, reacts: { yo: 9, animo: 6 }, mine: [] },
+      { id: 3, animal: "Pingüino", emoji: "🐧", bg: "#e3e5f7", time: "Hace 1 h", text: "Le conté a alguien cómo me sentía. Me dio nervios, pero me alegra haber dado ese pequeño paso. 💜", likes: 18, liked: false, reacts: { yo: 4, animo: 7 }, mine: [] }
+    ])
+  };
+  let pendingCita = { day: null, time: null };
+
+  const MOODS = [
+    { e: "😔", l: "Muy mal" }, { e: "🙁", l: "Mal" }, { e: "😐", l: "Regular" },
+    { e: "🙂", l: "Bien" }, { e: "😄", l: "Muy bien" }
+  ];
+  const SIGNALS = [
+    { k: "green", t: "No necesito hablar con nadie" },
+    { k: "yellow", t: "Quizá hable con alguien" },
+    { k: "red", t: "Quiero hablar con el psicólogo" }
+  ];
+
+  function rx(p) {
+    p.reacts = p.reacts || { yo: 0, animo: 0 };
+    p.mine = p.mine || [];
+    return p;
+  }
+
+  const DOW = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
+  const MES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+  function nextDays(n) {
+    const out = [], d = new Date();
+    while (out.length < n) {
+      d.setDate(d.getDate() + 1);
+      if (d.getDay() !== 0 && d.getDay() !== 6) out.push(new Date(d));
+    }
+    return out;
+  }
+  const dayLabel = d => `${DOW[d.getDay()]} ${d.getDate()} ${MES[d.getMonth()]}`;
+
+  /* ---------- Pantallas ---------- */
+  const views = {
+    auth() {
+      const reg = state.authMode === "register";
+      const hero = reg ? AVATARS[state.authAvatar] : AVATARS[0];
+      return `
+        <div class="auth">
+          <div class="auth-hero">
+            <div class="avatar lg" style="background:${hero.bg}">${hero.e}</div>
+            <span class="brand big" id="clock">${icon("brand", 18, 1.8)} refugio</span>
+            <h1>${reg ? "Crea tu espacio" : "Qué bueno verte"}</h1>
+            <p class="subtle">${reg ? "No necesitas datos reales. Elige un apodo y un avatar." : "Entra a tu espacio seguro. Aquí nadie te juzga."}</p>
+          </div>
+
+          <form class="card auth-card" data-form="auth" novalidate>
+            <div class="field">
+              <label for="f-apodo">${reg ? "Elige un apodo con el que te sientas cómodo" : "Tu apodo"}</label>
+              <input class="input" id="f-apodo" name="apodo" type="text" placeholder="${reg ? "Por ejemplo: Luna, Gato, Sol…" : "Escribe tu apodo"}" autocomplete="username" maxlength="24" value="${esc(state.authNick)}" />
+            </div>
+            ${reg ? `
+            <div class="field">
+              <label>Elige tu avatar</label>
+              <div class="avatars">
+                ${AVATARS.map((a, i) => `
+                  <button type="button" class="av ${state.authAvatar === i ? "active" : ""}" style="background:${a.bg}" data-action="pickAvatar" data-i="${i}" aria-label="${a.n}">${a.e}</button>`).join("")}
+              </div>
+            </div>` : ""}
+            <div class="field">
+              <label for="f-clave">Contraseña</label>
+              <div class="pw">
+                <input class="input" id="f-clave" name="clave" type="password" placeholder="${reg ? "Mínimo 4 caracteres" : "Tu contraseña"}" autocomplete="${reg ? "new-password" : "current-password"}" />
+                <button type="button" class="eye" data-action="togglePw" aria-label="Mostrar u ocultar contraseña">${icon("eye", 18, 1.8)}</button>
+              </div>
+            </div>
+            ${reg ? `<div class="field"><label for="f-grado">Tu grado (opcional)</label><select class="input" id="f-grado" name="grado">${GRADOS.map(g => `<option>${g}</option>`).join("")}</select></div>` : ""}
+            <p class="auth-error" id="authError" role="alert"></p>
+            <button class="btn" type="submit">${reg ? "Crear cuenta" : "Iniciar sesión"}</button>
+            ${reg ? "" : `<button type="button" class="link-btn" data-action="toast" data-msg="Esta demo guarda los datos solo en tu dispositivo">¿Olvidaste tu contraseña?</button>`}
+          </form>
+
+          <p class="subtle center">
+            ${reg ? "¿Ya tienes cuenta?" : "¿Aún no tienes cuenta?"}
+            <button type="button" class="link-btn" data-action="authMode" data-mode="${reg ? "login" : "register"}">${reg ? "Inicia sesión" : "Crear cuenta"}</button>
+          </p>
+          <button type="button" class="btn ghost" data-action="guest">Entrar sin cuenta</button>
+          <button type="button" class="link-btn" data-action="psiLogin" style="align-self:center">Acceso psicólogo</button>
+          <p class="subtle center" style="font-size:11px;line-height:1.45">Tus datos se guardan solo en este dispositivo.</p>
+        </div>`;
+    },
+
+    inicio() {
+      const av = avatarOf(state.session);
+      return `
+        <div class="header">
+          <h1>Inicio</h1>
+          <div class="hello"><span class="name">Hola${state.session && state.session.name ? ", " + esc(state.session.name.split(" ")[0]) : ","}</span> <div class="avatar" style="background:${av.bg}">${av.e}</div></div>
+        </div>
+
+        <section class="card">
+          <h2>¿Cómo te sientes hoy?</h2>
+          <p class="desc">Lo que sientes importa. Este es tu espacio.</p>
+          <div class="moods">
+            ${MOODS.map((m, i) => `
+              <button class="mood ${state.mood === i ? "active" : ""}" data-action="mood" data-i="${i}" aria-label="${m.l}">
+                <span class="face">${m.e}</span>${m.l}
+              </button>`).join("")}
+          </div>
+        </section>
+
+        <div class="banner">${icon("users", 20, 1.7)} 24 alumnos ya buscaron apoyo esta semana.</div>
+
+        <h3 class="section-title">Un momento para ti</h3>
+        <section class="pause">
+          <small>PAUSA DE 2 MINUTOS</small>
+          <h3>Respira. No hay prisa.</h3>
+          <button class="link" data-action="pause">Hacer una pausa ${icon("arrow", 15, 2)}</button>
+          <span class="art" aria-hidden="true">🦊</span>
+        </section>
+
+        <button class="row-card" data-action="go" data-tab="apoyo" style="margin-top:14px">
+          <span class="ico">${icon("hearthand", 20)}</span>
+          <span class="txt"><b>No tienes que poder con todo.</b><span>En Apoyo puedes dar el primer paso.</span></span>
+          <span class="chev">${icon("chev", 18)}</span>
+        </button>`;
+    },
+
+    perfil() {
+      return `
+        <div class="header">
+          <h1>Mi espacio</h1>
+          <span class="brand">${icon("brand", 16, 1.8)} refugio</span>
+        </div>
+        <p class="subtle" style="margin:-4px 0 14px 2px">A tu ritmo, sin juicios.</p>
+
+        <section class="card">
+          <h2 style="display:flex;gap:8px;align-items:center">
+            <span style="color:var(--primary)">${icon("bell", 20, 1.8)}</span> Semáforo de Apoyo
+          </h2>
+          <p class="desc">Elige cómo te sientes respecto a hablar con alguien hoy.</p>
+          <div class="semaforo">
+            ${SIGNALS.map(s => `
+              <button class="opt ${s.k} ${state.signal === s.k ? "active" : ""}" data-action="signal" data-k="${s.k}">
+                <span>${s.t}<i class="dot ${s.k}"></i></span>
+                ${state.signal === s.k ? `<span class="check">${icon("check", 14, 2.6)}</span>` : ""}
+              </button>`).join("")}
+          </div>
+          <div class="stack">
+            <button class="btn" data-action="chat">${icon("chat", 18, 2)} Iniciar Chat Privado</button>
+            ${state.signal === "red" ? `<button class="btn appear" data-action="quickCita">${icon("calendar", 18, 2)} Pedir cita en un toque</button><button class="link-btn appear" data-action="cita">Elegir otro horario o psicólogo</button>` : ""}
+            ${state.signal === "yellow" ? `<button class="btn ghost appear" data-action="pause">${icon("leaf", 17, 2)} Hacer una pausa de 2 minutos</button><button class="btn ghost appear" data-action="diary">${icon("edit", 17, 2)} Escribir en mi diario</button><button class="link-btn appear" data-action="chat">Prefiero hablar con el psicólogo</button>` : ""}
+          </div>
+          <div class="hours">${icon("clock", 13, 2)} Atención: ${HORARIO}</div>
+          <div class="note">${icon("heart", 13, 2)} Puedes cambiar de idea cuando quieras.</div>
+          <div class="privacy">
+            <div>${icon("shield", 14, 2)} <span>Tu estado es 100% privado y confidencial.</span></div>
+            <div>${icon("heart", 14, 2)} <span>No avisamos a nadie, tú decides cuándo pedir la cita.</span></div>
+          </div>
+          <button class="link-btn center-btn" data-action="clearSignal">Prefiero no usar el semáforo hoy</button>
+        </section>
+
+        <div class="grid2">
+          <button class="mini" data-action="gustos">
+            <span class="ico a">${icon("spark", 18)}</span><b>Lo que me gusta</b>
+            <span>Pequeñas cosas que me hacen bien.</span>
+          </button>
+          <button class="mini" data-action="diary">
+            <span class="ico b">${icon("edit", 18)}</span><b>Diario privado</b>
+            <span>Un lugar para ordenar lo que siento.</span>
+          </button>
+        </div>
+        <p class="subtle center">No hay una forma correcta de sentirse.</p>
+        <button class="btn ghost" data-action="logout" style="margin-top:16px">Cerrar sesión</button>`;
+    },
+
+    comunidad() {
+      state.posts.forEach(rx);
+      return `
+        <div class="header">
+          <h1>Comunidad</h1>
+          <span class="brand">${icon("brand", 16, 1.8)} refugio</span>
+        </div>
+        <p class="subtle" style="display:flex;gap:6px;align-items:center;margin:-4px 0 14px 2px">
+          <span style="color:var(--primary)">${icon("heart", 14, 2)}</span> Aquí nos escuchamos con respeto.
+        </p>
+        ${state.posts.map(p => `
+          <article class="post">
+            <div class="post-head">
+              <div class="avatar sm" style="background:${p.bg}">${p.emoji}</div>
+              <div class="who"><b>Anónimo · ${esc(p.animal)}</b><small>${p.time}</small></div>
+              <button aria-label="Más opciones" style="color:var(--muted)" data-action="toast" data-msg="Gracias por cuidar la comunidad">${icon("more", 18)}</button>
+            </div>
+            ${p.pending ? '<span class="badge">En revisión por el psicólogo</span>' : ""}<p>${esc(p.text)}</p>${(p.cmts || []).length ? `<div class="cmts">${p.cmts.map(c => `<span>💬 ${esc(c)}</span>`).join("")}</div>` : ""}
+            <div class="reacts">
+              <button class="chip ${p.mine.includes("yo") ? "on" : ""}" data-action="react" data-id="${p.id}" data-k="yo">🙋 Yo también · ${p.reacts.yo}</button>
+              <button class="chip ${p.mine.includes("animo") ? "on" : ""}" data-action="react" data-id="${p.id}" data-k="animo">💪 Ánimo · ${p.reacts.animo}</button>
+            </div>
+            <div class="post-foot">
+              <button class="${p.liked ? "liked" : ""}" data-action="like" data-id="${p.id}">${icon("heart", 15, 1.8)} Me gusta · ${p.likes}</button>
+              <button data-action="comment" data-id="${p.id}">${icon("comment", 15, 1.8)} Comentar${p.comments ? " · " + p.comments : ""}</button>
+            </div>
+          </article>`).join("")}
+        <div class="share"><button data-action="share">${icon("pencil", 15, 2)} Compartir cómo me siento</button></div>`;
+    },
+
+    apoyo() {
+      const c = state.cita;
+      return `
+        <div class="header">
+          <h1>Apoyo</h1>
+          <span class="brand">${icon("brand", 16, 1.8)} refugio</span>
+        </div>
+        <div class="hero">
+          <div class="avatar lg" style="background:#efe0d2">🐻</div>
+          <div><h2>No estás a solas.</h2><p class="subtle">Pedir ayuda también es cuidarte.</p></div>
+        </div>
+
+        <section class="card">
+          <div class="top-row">
+            <span class="ico">${icon("chat", 18)}</span>
+            <div><b>Habla con el psicólogo</b><span>Apoyo de tu centro educativo</span></div>
+          </div>
+          ${c ? `
+          <div class="cita-banner">
+            ${icon("calendar", 18, 2)}
+            <span>Tu cita: <b>${esc(c.day)} · ${esc(c.time)}</b>${PSIS[c.psi] ? " con " + esc(PSIS[c.psi].n) : ""}${c.padres ? "<br><small>Se avisará a tus padres porque lo pediste.</small>" : ""}</span>
+            <button class="link-btn" data-action="cancelCita">Cancelar</button>
+          </div>` : ""}
+          <p class="desc" style="margin-bottom:14px">Puedes empezar con un «hola». Comparte solo lo que te resulte cómodo, a tu ritmo.</p>
+          <div class="stack">
+            <button class="btn" data-action="chat">${icon("chat", 17, 2)} Iniciar Chat Privado</button>
+            <button class="btn ghost" data-action="cita">${icon("calendar", 17, 2)} ${c ? "Cambiar cita" : "Pedir cita"}</button>
+          </div>
+          <div class="hours">${icon("clock", 13, 2)} Atención: ${HORARIO}</div>
+          <p class="subtle" style="font-size:11px;margin-top:10px;line-height:1.45">Tu información es privada. No se comparte nada de forma automática: tú decides qué contar y cuándo.</p>
+        </section>
+
+        <h3 class="section-title">Otras formas de dar el primer paso</h3>
+        <button class="row-card" data-action="toast" data-msg="Te ayudaremos a preparar lo que quieres contar">
+          <span class="ico">${icon("users", 19)}</span>
+          <span class="txt"><b>Alguien de confianza</b><span>Prepara lo que quieres contarle.</span></span>
+          <span class="chev">${icon("chev", 18)}</span>
+        </button>
+        <button class="row-card" data-action="toast" data-msg="Recursos para los días difíciles, muy pronto">
+          <span class="ico">${icon("leaf", 19)}</span>
+          <span class="txt"><b>Ideas para cuidarte</b><span>Recursos para los días difíciles.</span></span>
+          <span class="chev">${icon("chev", 18)}</span>
+        </button>
+
+        <div class="urgent"><b>¿Necesitas ayuda urgente?</b>
+          Si estás en peligro o piensas en hacerte daño, no esperes a tu cita. Busca a un adulto de confianza o llama gratis a la Línea 113 del MINSA (salud mental, opción 5), las 24 horas.
+          <div class="help-links">
+            <a href="tel:113">${icon("bell", 16, 2)} Llamar al 113</a>
+            <a class="alt" href="https://wa.me/51955557000" target="_blank" rel="noopener">${icon("chat", 16, 2)} WhatsApp 955 557 000</a>
+          </div></div>`;
+    }
+  };
+
+  /* Panel lateral derecho para pantallas grandes (Estilo Duolingo) */
+  function renderRightRail() {
+    const c = state.cita;
+    const sigLabels = {
+      green: "🟢 Tranquilo/a por hoy",
+      yellow: "🟡 Quizá hable con alguien",
+      red: "🔴 Quiero hablar con el psicólogo"
+    };
+    return `
+      <div class="rail-card">
+        <h3><span style="color:var(--primary)">${icon("bell", 18, 2)}</span> Semáforo de Apoyo</h3>
+        <p>${state.signal ? `Estado actual: <b>${sigLabels[state.signal]}</b>` : "Marca de forma privada cómo te sientes respecto a hablar hoy."}</p>
+        <div class="semaforo" style="margin:8px 0 12px">
+          ${SIGNALS.map(s => `
+            <button class="opt ${s.k} ${state.signal === s.k ? "active" : ""}" style="padding:10px 12px;font-size:12.5px" data-action="signal" data-k="${s.k}">
+              <span>${s.t}<i class="dot ${s.k}"></i></span>
+              ${state.signal === s.k ? `<span class="check">${icon("check", 12, 2.6)}</span>` : ""}
+            </button>`).join("")}
+        </div>
+        ${state.signal === "red" ? `<button class="btn" data-action="quickCita">${icon("calendar", 16, 2)} Pedir cita en 1 toque</button>` : `<button class="btn ghost" data-action="chat">${icon("chat", 16, 2)} Chat con psicólogo</button>`}
+      </div>
+
+      <div class="rail-card">
+        <h3><span style="color:var(--primary)">${icon("leaf", 18, 2)}</span> Herramientas rápidas</h3>
+        <p>Tu espacio personal y confidencial en cualquier momento.</p>
+        <div class="stack">
+          <button class="btn ghost" data-action="pause">🦊 Pausa de 2 minutos</button>
+          <button class="btn ghost" data-action="diary">${icon("edit", 16, 2)} Diario privado</button>
+        </div>
+        ${c ? `<div class="cita-banner" style="margin-top:12px;margin-bottom:0">${icon("calendar", 16, 2)}<span>Cita: <b>${esc(c.day)} · ${esc(c.time)}</b></span></div>` : ""}
+      </div>
+    `;
+  }
+
+  const TABS = [
+    { k: "inicio", l: "Inicio", i: "home" },
+    { k: "comunidad", l: "Comunidad", i: "users" },
+    { k: "apoyo", l: "Apoyo", i: "heart" },
+    { k: "perfil", l: "Mi espacio", i: "user" }
+  ];
+
+  /* ---------- Render ---------- */
+  const $screen = document.getElementById("screen");
+  const $tabbar = document.getElementById("tabbar");
+  const $rightRail = document.getElementById("rightRail");
+  const $overlay = document.getElementById("overlay");
+  const $app = document.getElementById("app");
+
+  function render() {
+    const logged = !!state.session;
+    const isAppView = logged && !state.psi;
+    const st = $screen.scrollTop;
+
+    $app.classList.toggle("logged-in", isAppView);
+    $app.classList.toggle("auth-view", !logged && !state.psi);
+
+    $screen.innerHTML = state.psi ? views.psi() : logged ? views[state.tab]() : views.auth();
+    $screen.scrollTop = st;
+
+    $tabbar.style.display = isAppView ? "" : "none";
+    $tabbar.innerHTML = !isAppView ? "" : `
+      <div class="sidebar-brand" id="clock">${icon("brand", 24, 2.2)} refugio</div>
+      ${TABS.map(t => `
+        <button class="tab ${state.tab === t.k ? "active" : ""}" data-action="go" data-tab="${t.k}" aria-label="${t.l}">
+          <span class="pill">${icon(t.i, 22, 2)}</span><span>${t.l}</span>
+        </button>`).join("")}
+    `;
+
+    if ($rightRail) {
+      $rightRail.style.display = isAppView ? "" : "none";
+      $rightRail.innerHTML = isAppView ? renderRightRail() : "";
+    }
+  }
+
+  function go(tab) {
+    state.tab = tab;
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    $screen.scrollTop = 0;
+  }
+
+  /* ---------- Modales ---------- */
+  function sheet(title, body, onMount) {
+    $overlay.hidden = false;
+    $overlay.innerHTML = `
+      <div class="sheet" role="dialog" aria-modal="true" aria-label="${title}">
+        <div class="sheet-head"><h3>${title}</h3>
+          <button class="close" data-action="close" aria-label="Cerrar">${icon("x", 16, 2)}</button></div>
+        ${body}
+      </div>`;
+    if (onMount) onMount($overlay);
+  }
+  function closeSheet() { $overlay.hidden = true; $overlay.innerHTML = ""; $overlay.classList.remove("center"); }
+
+  function toast(msg) {
+    const old = $app.querySelector(".toast");
+    if (old) old.remove();
+    const t = document.createElement("div");
+    t.className = "toast";
+    t.textContent = msg;
+    $app.appendChild(t);
+    setTimeout(() => t.remove(), 2200);
+  }
+
+  function openChat() {
+    sheet("Chat privado", `
+      <div class="chat" id="chat">
+        <div class="bubble them">Hola 💜 Qué bueno que escribiste. Comparte solo lo que te resulte cómodo, a tu ritmo.</div>
+      </div>
+      <div class="chat-input">
+        <input class="input" id="chatText" placeholder="Escribe un «hola»..." autocomplete="off" />
+        <button class="send" id="chatSend" aria-label="Enviar">${icon("send", 18, 2)}</button>
+      </div>
+      <div class="hours">${icon("clock", 13, 2)} Atención: ${HORARIO}</div>
+      <p class="subtle" style="font-size:11px;margin-top:8px">Demo: este chat no está conectado a ningún psicólogo real.</p>`,
+      root => {
+        const chat = root.querySelector("#chat");
+        const input = root.querySelector("#chatText");
+        const add = (cls, txt) => {
+          const b = document.createElement("div");
+          b.className = "bubble " + cls;
+          b.textContent = txt;
+          chat.appendChild(b);
+          chat.scrollTop = chat.scrollHeight;
+        };
+        const send = () => {
+          const v = input.value.trim();
+          if (!v) return;
+          add("me", v);
+          input.value = "";
+          setTimeout(() => add("them", "Gracias por contármelo. Aquí estoy para escucharte, sin prisa."), 900);
+        };
+        root.querySelector("#chatSend").addEventListener("click", send);
+        input.addEventListener("keydown", e => { if (e.key === "Enter") send(); });
+        input.focus();
+      });
+  }
+
+  function openPause() {
+    sheet("Pausa de 2 minutos", `
+      <div class="breath"><div class="circle"></div>
+        <p>Inhala despacio… y suelta el aire. No hay prisa.</p></div>
+      <button class="btn ghost" data-action="close">Listo, me siento mejor</button>`);
+  }
+
+  function openDiary() {
+    sheet("Diario privado", `
+      <textarea id="diaryText" rows="6" placeholder="Escribe lo que sientes. Solo tú lo ves."></textarea>
+      <button class="btn" style="margin-top:12px" data-action="saveDiary">Guardar</button>`,
+      root => {
+        const ta = root.querySelector("#diaryText");
+        ta.value = store.get("diary", "");
+        ta.focus();
+      });
+  }
+
+  function openShare() {
+    sheet("Compartir cómo me siento", `
+      <textarea id="postText" rows="5" maxlength="240" placeholder="Tu mensaje será anónimo y la comunidad lo leerá con respeto."></textarea>
+      <button class="btn" style="margin-top:12px" data-action="publish">Publicar de forma anónima</button>`,
+      root => root.querySelector("#postText").focus());
+  }
+
+  function openComment(id) {
+    sheet("Responder con apoyo", `
+      <p class="subtle" style="margin:-4px 0 8px;line-height:1.45">Para cuidar a todos, solo puedes responder con mensajes de apoyo.</p>
+      <div class="stack">${COMENTARIOS.map(t => `<button class="btn ghost" data-action="sendComment" data-id="${id}" data-text="${esc(t)}">${esc(t)}</button>`).join("")}</div>`);
+  }
+
+  function openRisk() {
+    sheet("Estamos contigo 💜", `
+      <p class="subtle" style="margin:-4px 0 12px;line-height:1.5">Lo que escribiste es importante y no queremos que lo cargues solo/a. No lo publicamos, pero puedes hablar ahora con el psicólogo.</p>
+      <div class="stack">
+        <button class="btn" data-action="chat">${icon("chat", 17, 2)} Hablar con el psicólogo</button>
+        <button class="btn ghost" data-action="quickCita">${icon("calendar", 17, 2)} Pedir cita en un toque</button>
+      </div>
+      <div class="help-links"><a href="tel:113">${icon("bell", 16, 2)} Llamar gratis al 113 (opción 5)</a></div>`);
+    if (window.refugioTrack) window.refugioTrack("alerta_riesgo");
+  }
+
+  function openGustos() {
+    const g = store.get("gustos", []);
+    sheet("Lo que me gusta", `
+      <p class="subtle" style="margin:-4px 0 10px;line-height:1.45">Anota pequeñas cosas que te hacen bien. Solo tú las ves.</p>
+      <div class="chat-input"><input class="input" id="gustoText" maxlength="60" placeholder="Ej.: escuchar música, mi perro…" autocomplete="off" /><button class="send" data-action="addGusto" aria-label="Agregar">${icon("check", 18, 2.4)}</button></div>
+      <div style="margin-top:12px;overflow-y:auto">${g.length ? g.map((t, i) => `<div class="psi-item" style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>💜 ${esc(t)}</span><button class="link-btn" data-action="delGusto" data-i="${i}">Quitar</button></div>`).join("") : '<p class="subtle center">Aún no agregas nada.</p>'}</div>`,
+      root => root.querySelector("#gustoText").focus());
+  }
+
+  function openPsiLogin() {
+    sheet("Acceso psicólogo", `
+      <p class="subtle" style="margin:-4px 0 10px">Ingresa el PIN del colegio.</p>
+      <input class="input" id="psiPin" type="password" inputmode="numeric" maxlength="8" placeholder="PIN" />
+      <p class="auth-error" id="psiErr" role="alert"></p>
+      <button class="btn" style="margin-top:12px" data-action="psiEnter">Entrar</button>`,
+      root => root.querySelector("#psiPin").focus());
+  }
+
+  function semaforoAgg() {
+    const ev = store.get("events", []), by = {}, r = { green: 0, yellow: 0, red: 0 };
+    ev.forEach(x => { if (x.e === "semaforo" && x.d !== "no_usar") by[x.s] = x.d; });
+    Object.values(by).forEach(k => { if (r[k] !== undefined) r[k]++; });
+    if (!ev.length && state.signal) r[state.signal]++;
+    return r;
+  }
+
+  views.psi = function () {
+    const pend = state.posts.filter(p => p.pending), sem = semaforoAgg(), c = state.cita;
+    return `
+      <div class="header"><h1>Psicólogo</h1><span class="brand" id="clock">${icon("shield", 16, 1.8)} panel</span></div>
+      <p class="subtle" style="margin:-4px 0 14px 2px">Vista simulada del colegio. Solo datos generales y anónimos.</p>
+      <h3 class="section-title">Testimonios por revisar (${pend.length})</h3>
+      ${pend.length ? pend.map(p => `<div class="psi-item"><b>Anónimo · ${esc(p.animal)}</b><br>${esc(p.text)}<div class="psi-actions"><button class="btn" data-action="psiApprove" data-id="${p.id}">Aprobar</button><button class="btn ghost" data-action="psiReject" data-id="${p.id}">Rechazar</button></div></div>`).join("") : '<p class="subtle">No hay testimonios pendientes.</p>'}
+      <h3 class="section-title">Clima emocional (anónimo)</h3>
+      <div class="psi-item">🟢 ${sem.green} · 🟡 ${sem.yellow} · 🔴 ${sem.red}<br><span class="subtle">Estudiantes por color del semáforo.</span></div>
+      <h3 class="section-title">Solicitudes de cita</h3>
+      ${c ? `<div class="psi-item">${esc(c.day)} · ${esc(c.time)} con ${esc((PSIS[c.psi] || PSIS[0]).n)}<br><span class="subtle">${c.padres ? "El estudiante pidió avisar a sus padres." : "Sin aviso a padres."} No se muestra el nombre del estudiante.</span></div>` : '<p class="subtle">No hay solicitudes.</p>'}
+      <button class="btn ghost" data-action="psiExit" style="margin-top:16px">Salir del panel</button>`;
+  };
+
+  function openSurvey() {
+    sheet("¿Cómo te sentiste?", `
+      <p class="subtle" style="margin:-4px 0 4px;line-height:1.45">Cuéntanos qué tal fue comentar. Tu respuesta es anónima y nos ayuda a mejorar Refugio.</p>
+      <div class="moods">
+        ${MOODS.map((m, i) => `
+          <button class="mood" data-action="survey" data-i="${i}" aria-label="${m.l}">
+            <span class="face">${m.e}</span>${m.l}
+          </button>`).join("")}
+      </div>
+      <button class="link-btn" style="margin-top:14px;align-self:center" data-action="close">Ahora no</button>`);
+    $overlay.classList.add("center");
+  }
+
+  function openCita() {
+    pendingCita = { day: null, time: null, psi: 0, padres: false };
+    sheet("Pedir cita", `
+      <button class="btn" data-action="quickCita" style="margin-bottom:10px">${icon("calendar", 17, 2)} Reservar el próximo horario libre</button>
+      <p class="subtle" style="margin:0 0 6px;line-height:1.45">O elige tú. No avisamos a nadie más.</p>
+      <p class="chips-label">Psicólogo</p>
+      <div class="chips">${PSIS.map((p, i) => `<button class="chip ${i === 0 ? "on" : ""}" data-action="pickPsi" data-i="${i}">${esc(p.n)}</button>`).join("")}</div>
+      <p class="chips-label">Día</p>
+      <div class="chips">
+        ${nextDays(5).map(dt => { const l = dayLabel(dt); return `<button class="chip day" data-action="pickDay" data-label="${l}">${l}</button>`; }).join("")}
+      </div>
+      <p class="chips-label">Hora</p>
+      <div class="chips">
+        ${TIMES.map(t => `<button class="chip" data-action="pickTime" data-t="${t}">${t}</button>`).join("")}
+      </div>
+      <div class="chips"><button class="chip" data-action="togglePadres">👪 Avisar a mis padres</button></div>
+      <p class="note-box">Solo avisamos a tus padres si tú lo pides. Si el psicólogo ve un riesgo grave, podría contactar a un adulto para cuidarte.</p>
+      <button class="btn" data-action="confirmCita" disabled>Confirmar cita</button>
+      <div class="hours">${icon("clock", 13, 2)} Atención: ${HORARIO}</div>`);
+  }
+
+  function selectChip(el) {
+    $overlay.querySelectorAll('[data-action="' + el.dataset.action + '"]').forEach(b => b.classList.toggle("on", b === el));
+    const ok = $overlay.querySelector('[data-action="confirmCita"]');
+    if (ok) ok.disabled = !(pendingCita.day && pendingCita.time);
+  }
+
+  function openPrivacy() {
+    store.set("privacyIntroSeen", true);
+    const li = t => `<li><span class="check">${icon("check", 12, 3)}</span><span>${t}</span></li>`;
+    sheet("Tu espacio es privado", `
+      <ul class="checklist">
+        ${li("Lo que marcas y escribes aquí es tuyo.")}
+        ${li("No avisamos a nadie. Tú decides qué compartes con el psicólogo y cuándo.")}
+        ${li("Puedes usar un apodo y un avatar. No pedimos datos reales.")}
+        ${li("El semáforo es opcional: úsalo solo si te sirve.")}
+        ${li("Solo si hay un riesgo grave, el psicólogo podría avisar a un adulto para cuidarte.")}
+      </ul>
+      <button class="btn" data-action="close">Entendido</button>`);
+    $overlay.classList.add("center");
+  }
+  function maybePrivacy() {
+    if (state.session && !store.get("privacyIntroSeen", false)) {
+      setTimeout(() => { if (state.session && $overlay.hidden) openPrivacy(); }, 500);
+    }
+  }
+
+  /* ---------- Eventos ---------- */
+  document.addEventListener("click", e => {
+    const el = e.target.closest("[data-action]");
+    if (!el) return;
+    const d = el.dataset;
+    switch (d.action) {
+      case "go": go(d.tab); break;
+      case "mood": state.mood = +d.i; store.set("mood", state.mood); render(); break;
+      case "signal": state.signal = d.k; store.set("signal", d.k); render(); break;
+      case "clearSignal":
+        state.signal = null; store.set("signal", null); render();
+        toast("Listo, el semáforo queda sin elegir"); break;
+      case "like": {
+        const p = state.posts.find(x => x.id === +d.id);
+        p.liked = !p.liked; p.likes += p.liked ? 1 : -1;
+        store.set("posts", state.posts); render(); break;
+      }
+      case "react": {
+        const p = rx(state.posts.find(x => x.id === +d.id));
+        const on = p.mine.includes(d.k);
+        p.mine = on ? p.mine.filter(k => k !== d.k) : p.mine.concat(d.k);
+        p.reacts[d.k] += on ? -1 : 1;
+        store.set("posts", state.posts); render(); break;
+      }
+      case "chat": openChat(); break;
+      case "pause": openPause(); break;
+      case "diary": openDiary(); break;
+      case "share": openShare(); break;
+      case "saveDiary": {
+        store.set("diary", document.getElementById("diaryText").value);
+        closeSheet(); toast("Guardado solo para ti"); break;
+      }
+      case "publish": {
+        const v = document.getElementById("postText").value.trim();
+        if (!v) return;
+        const a = avatarOf(state.session);
+        if (RIESGO.test(v.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))) { openRisk(); break; }
+        state.posts.unshift({ id: Date.now(), animal: a.n, emoji: a.e, bg: a.bg, time: "Ahora", text: v, pending: true, likes: 0, liked: false, reacts: { yo: 0, animo: 0 }, mine: [] });
+        store.set("posts", state.posts);
+        closeSheet(); render(); toast("Un psicólogo lo revisará antes de publicarlo 💜"); break;
+      }
+      case "authMode": {
+        const em = document.querySelector('form[data-form="auth"] [name="apodo"]');
+        state.authNick = em ? em.value : "";
+        state.authMode = d.mode; render(); break;
+      }
+      case "pickAvatar": {
+        state.authAvatar = +d.i;
+        document.querySelectorAll('[data-action="pickAvatar"]').forEach(b => b.classList.toggle("active", b === el));
+        const hero = document.querySelector(".auth-hero .avatar");
+        if (hero) { hero.textContent = AVATARS[state.authAvatar].e; hero.style.background = AVATARS[state.authAvatar].bg; }
+        break;
+      }
+      case "togglePw": {
+        const pw = document.querySelector('form[data-form="auth"] [name="clave"]');
+        if (pw) pw.type = pw.type === "password" ? "text" : "password";
+        break;
+      }
+      case "guest": startSession({ name: "", guest: true, avatar: 0 }); break;
+      case "logout":
+        state.session = null; store.set("session", null);
+        state.authMode = "login"; state.authNick = ""; state.authAvatar = 0; state.tab = "inicio";
+        render(); break;
+      case "comment": openComment(d.id); break;
+      case "sendComment": {
+        const txt = d.text;
+        if (!txt) return;
+        const p = state.posts.find(x => x.id === +d.id);
+        p.cmts = (p.cmts || []).concat(txt);
+        p.comments = (p.comments || 0) + 1;
+        store.set("posts", state.posts);
+        closeSheet(); render();
+        if (!store.get("firstCommentDone", false)) {
+          store.set("firstCommentDone", true);
+          setTimeout(openSurvey, 450);
+        } else toast("Gracias por comentar 💜");
+        break;
+      }
+      case "survey":
+        store.set("survey", { value: MOODS[+d.i].l, at: new Date().toISOString() });
+        closeSheet(); toast("¡Gracias por contarnos!"); break;
+      case "cita":
+        if (state.tab !== "apoyo") go("apoyo");
+        openCita(); break;
+      case "quickCita":
+        state.cita = { day: dayLabel(nextDays(1)[0]), time: TIMES[0], psi: 0, padres: false };
+        store.set("cita", state.cita);
+        closeSheet(); if (state.tab !== "apoyo") go("apoyo"); else render();
+        toast("Cita pedida: " + state.cita.day + " · " + state.cita.time + " 💜"); break;
+      case "pickPsi": pendingCita.psi = +d.i; selectChip(el); break;
+      case "togglePadres": pendingCita.padres = !pendingCita.padres; el.classList.toggle("on", pendingCita.padres); break;
+      case "gustos": openGustos(); break;
+      case "addGusto": {
+        const v = document.getElementById("gustoText").value.trim();
+        if (!v) return;
+        store.set("gustos", store.get("gustos", []).concat(v)); openGustos(); break;
+      }
+      case "delGusto": { const g = store.get("gustos", []); g.splice(+d.i, 1); store.set("gustos", g); openGustos(); break; }
+      case "psiLogin": openPsiLogin(); break;
+      case "psiEnter":
+        if (document.getElementById("psiPin").value === PSI_PIN) { closeSheet(); state.psi = true; render(); $screen.scrollTop = 0; }
+        else document.getElementById("psiErr").textContent = "PIN incorrecto."; break;
+      case "psiApprove": { const p = state.posts.find(x => x.id === +d.id); if (p) { p.pending = false; p.time = "Ahora"; store.set("posts", state.posts); } render(); toast("Testimonio aprobado"); break; }
+      case "psiReject": state.posts = state.posts.filter(x => x.id !== +d.id); store.set("posts", state.posts); render(); toast("Testimonio rechazado"); break;
+      case "psiExit": state.psi = false; render(); break;
+      case "pickDay": pendingCita.day = d.label; selectChip(el); break;
+      case "pickTime": pendingCita.time = d.t; selectChip(el); break;
+      case "confirmCita":
+        if (!(pendingCita.day && pendingCita.time)) return;
+        state.cita = { day: pendingCita.day, time: pendingCita.time, psi: pendingCita.psi || 0, padres: !!pendingCita.padres };
+        store.set("cita", state.cita);
+        closeSheet(); render(); toast("Listo, tu cita quedó pedida 💜"); break;
+      case "cancelCita":
+        state.cita = null; store.set("cita", null); render(); toast("Cita cancelada"); break;
+      case "toast": toast(d.msg); break;
+      case "close": closeSheet(); break;
+    }
+  });
+
+  function startSession(s) {
+    state.session = s; store.set("session", s);
+    state.tab = "inicio"; render(); $screen.scrollTop = 0;
+    maybePrivacy();
+  }
+
+  document.addEventListener("submit", async e => {
+    const f = e.target.closest('form[data-form="auth"]');
+    if (!f) return;
+    e.preventDefault();
+    const err = f.querySelector("#authError");
+    const fail = m => { err.textContent = m; };
+    const nick = f.querySelector('[name="apodo"]').value.trim();
+    const key = nick.toLowerCase();
+    const pass = f.querySelector('[name="clave"]').value;
+    if (!nick) return fail("Escribe el apodo que quieras usar.");
+    const users = store.get("users", {});
+    if (state.authMode === "register") {
+      if (pass.length < 4) return fail("La contraseña debe tener al menos 4 caracteres.");
+      if (users[key]) return fail("Ese apodo ya existe. Prueba con otro o inicia sesión.");
+      const grade = (f.querySelector('[name="grado"]') || {}).value || "";
+      users[key] = { name: nick, hash: await sha(pass), avatar: state.authAvatar, grade };
+      store.set("users", users);
+      startSession({ name: nick, avatar: state.authAvatar, grade });
+    } else {
+      const u = users[key];
+      if (!u || u.hash !== await sha(pass)) return fail("Apodo o contraseña incorrectos.");
+      startSession({ name: u.name, avatar: Number.isInteger(u.avatar) ? u.avatar : 0, grade: u.grade || "" });
+    }
+  });
+
+  $overlay.addEventListener("click", e => { if (e.target === $overlay) closeSheet(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+
+  render();
+  maybePrivacy();
+})();
+</script>
+  <script src="tracking.js"></script>
+</body>
+</html>
