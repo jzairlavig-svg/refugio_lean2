@@ -363,6 +363,9 @@ textarea:focus, .input:focus { border-color: var(--primary); }
 .cmts span { font-size:12px; color:var(--ink); background:#f3f4fb; border-radius:12px; padding:7px 10px; }
 .note-box { font-size:11.5px; color:#4d5278; background:#f3f4ff; border-radius:12px; padding:10px 12px; line-height:1.45; margin:4px 0 12px; }
 select.input { appearance:auto; }
+.psi-item { background:#fff; border-radius:16px; padding:12px; box-shadow:var(--shadow); margin-bottom:10px; font-size:13px; line-height:1.45; }
+.psi-actions { display:flex; gap:8px; margin-top:10px; }
+.psi-actions .btn { padding:10px; font-size:13px; }
 </style>
 </head>
 <body>
@@ -430,6 +433,7 @@ select.input { appearance:auto; }
   const HORARIO = "Lunes a viernes · 8:00 a. m. – 1:00 p. m.";   // horario de atención del psicólogo
   const TIMES = ["8:00 a. m.", "9:30 a. m.", "11:00 a. m.", "12:30 p. m."];
   const PSIS = [{ n: "Psic. Andrea Rojas", t: "Psicóloga del colegio" }, { n: "Psic. Luis Paredes", t: "Psicólogo del colegio" }];   // editar con los nombres reales
+  const PSI_PIN = "2468";   // PIN de la vista del psicólogo (editable)
   const GRADOS = ["1.º de secundaria", "2.º de secundaria", "3.º de secundaria", "4.º de secundaria", "5.º de secundaria", "Prefiero no decirlo"];
   const COMENTARIOS = ["Gracias por contarlo 💜", "No estás solo/a", "A mí también me pasa", "Qué valiente por compartirlo", "Paso a paso, tú puedes"];
   const RIESGO = /suicid|matarme|quitarme la vida|quiero morir|no quiero vivir|cortarme|autolesion|hacerme da[nñ]o|acabar con todo/;
@@ -539,6 +543,7 @@ select.input { appearance:auto; }
             <button type="button" class="link-btn" data-action="authMode" data-mode="${reg ? "login" : "register"}">${reg ? "Inicia sesión" : "Crear cuenta"}</button>
           </p>
           <button type="button" class="btn ghost" data-action="guest">Entrar sin cuenta</button>
+          <button type="button" class="link-btn" data-action="psiLogin" style="align-self:center">Acceso psicólogo</button>
           <p class="subtle center" style="font-size:11px;line-height:1.45">Tus datos se guardan solo en este dispositivo.</p>
         </div>`;
     },
@@ -602,6 +607,7 @@ select.input { appearance:auto; }
           <div class="stack">
             <button class="btn" data-action="chat">${icon("chat", 18, 2)} Iniciar Chat Privado</button>
             ${state.signal === "red" ? `<button class="btn appear" data-action="quickCita">${icon("calendar", 18, 2)} Pedir cita en un toque</button><button class="link-btn appear" data-action="cita">Elegir otro horario o psicólogo</button>` : ""}
+            ${state.signal === "yellow" ? `<button class="btn ghost appear" data-action="pause">${icon("leaf", 17, 2)} Hacer una pausa de 2 minutos</button><button class="btn ghost appear" data-action="diary">${icon("edit", 17, 2)} Escribir en mi diario</button><button class="link-btn appear" data-action="chat">Prefiero hablar con el psicólogo</button>` : ""}
           </div>
           <div class="hours">${icon("clock", 13, 2)} Atención: ${HORARIO}</div>
           <div class="note">${icon("heart", 13, 2)} Puedes cambiar de idea cuando quieras.</div>
@@ -613,7 +619,7 @@ select.input { appearance:auto; }
         </section>
 
         <div class="grid2">
-          <button class="mini" data-action="toast" data-msg="Pronto podrás guardar lo que te hace bien">
+          <button class="mini" data-action="gustos">
             <span class="ico a">${icon("spark", 18)}</span><b>Lo que me gusta</b>
             <span>Pequeñas cosas que me hacen bien.</span>
           </button>
@@ -721,10 +727,10 @@ select.input { appearance:auto; }
   function render() {
     const logged = !!state.session;
     const st = $screen.scrollTop;
-    $screen.innerHTML = logged ? views[state.tab]() : views.auth();
+    $screen.innerHTML = state.psi ? views.psi() : logged ? views[state.tab]() : views.auth();
     $screen.scrollTop = st;
-    $tabbar.style.display = logged ? "" : "none";
-    $tabbar.innerHTML = !logged ? "" : TABS.map(t => `
+    $tabbar.style.display = (logged && !state.psi) ? "" : "none";
+    $tabbar.innerHTML = (!logged || state.psi) ? "" : TABS.map(t => `
       <button class="tab ${state.tab === t.k ? "active" : ""}" data-action="go" data-tab="${t.k}" aria-label="${t.l}">
         <span class="pill">${icon(t.i, 20, 1.8)}</span>${t.l}
       </button>`).join("");
@@ -833,6 +839,46 @@ select.input { appearance:auto; }
       </div>`);
     if (window.refugioTrack) window.refugioTrack("alerta_riesgo");
   }
+
+  function openGustos() {
+    const g = store.get("gustos", []);
+    sheet("Lo que me gusta", `
+      <p class="subtle" style="margin:-4px 0 10px;line-height:1.45">Anota pequeñas cosas que te hacen bien. Solo tú las ves.</p>
+      <div class="chat-input"><input class="input" id="gustoText" maxlength="60" placeholder="Ej.: escuchar música, mi perro…" autocomplete="off" /><button class="send" data-action="addGusto" aria-label="Agregar">${icon("check", 18, 2.4)}</button></div>
+      <div style="margin-top:12px;overflow-y:auto">${g.length ? g.map((t, i) => `<div class="psi-item" style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>💜 ${esc(t)}</span><button class="link-btn" data-action="delGusto" data-i="${i}">Quitar</button></div>`).join("") : '<p class="subtle center">Aún no agregas nada.</p>'}</div>`,
+      root => root.querySelector("#gustoText").focus());
+  }
+
+  function openPsiLogin() {
+    sheet("Acceso psicólogo", `
+      <p class="subtle" style="margin:-4px 0 10px">Ingresa el PIN del colegio.</p>
+      <input class="input" id="psiPin" type="password" inputmode="numeric" maxlength="8" placeholder="PIN" />
+      <p class="auth-error" id="psiErr" role="alert"></p>
+      <button class="btn" style="margin-top:12px" data-action="psiEnter">Entrar</button>`,
+      root => root.querySelector("#psiPin").focus());
+  }
+
+  function semaforoAgg() {
+    const ev = store.get("events", []), by = {}, r = { green: 0, yellow: 0, red: 0 };
+    ev.forEach(x => { if (x.e === "semaforo" && x.d !== "no_usar") by[x.s] = x.d; });
+    Object.values(by).forEach(k => { if (r[k] !== undefined) r[k]++; });
+    if (!ev.length && state.signal) r[state.signal]++;
+    return r;
+  }
+
+  views.psi = function () {
+    const pend = state.posts.filter(p => p.pending), sem = semaforoAgg(), c = state.cita;
+    return `
+      <div class="header"><h1>Psicólogo</h1><span class="brand">${icon("shield", 16, 1.8)} panel</span></div>
+      <p class="subtle" style="margin:-4px 0 14px 2px">Vista simulada del colegio. Solo datos generales y anónimos.</p>
+      <h3 class="section-title">Testimonios por revisar (${pend.length})</h3>
+      ${pend.length ? pend.map(p => `<div class="psi-item"><b>Anónimo · ${esc(p.animal)}</b><br>${esc(p.text)}<div class="psi-actions"><button class="btn" data-action="psiApprove" data-id="${p.id}">Aprobar</button><button class="btn ghost" data-action="psiReject" data-id="${p.id}">Rechazar</button></div></div>`).join("") : '<p class="subtle">No hay testimonios pendientes.</p>'}
+      <h3 class="section-title">Clima emocional (anónimo)</h3>
+      <div class="psi-item">🟢 ${sem.green} · 🟡 ${sem.yellow} · 🔴 ${sem.red}<br><span class="subtle">Estudiantes por color del semáforo.</span></div>
+      <h3 class="section-title">Solicitudes de cita</h3>
+      ${c ? `<div class="psi-item">${esc(c.day)} · ${esc(c.time)} con ${esc((PSIS[c.psi] || PSIS[0]).n)}<br><span class="subtle">${c.padres ? "El estudiante pidió avisar a sus padres." : "Sin aviso a padres."} No se muestra el nombre del estudiante.</span></div>` : '<p class="subtle">No hay solicitudes.</p>'}
+      <button class="btn ghost" data-action="psiExit" style="margin-top:16px">Salir del panel</button>`;
+  };
 
   /* Encuesta emergente: aparece al dejar el primer comentario */
   function openSurvey() {
@@ -988,6 +1034,20 @@ select.input { appearance:auto; }
         toast("Cita pedida: " + state.cita.day + " · " + state.cita.time + " 💜"); break;
       case "pickPsi": pendingCita.psi = +d.i; selectChip(el); break;
       case "togglePadres": pendingCita.padres = !pendingCita.padres; el.classList.toggle("on", pendingCita.padres); break;
+      case "gustos": openGustos(); break;
+      case "addGusto": {
+        const v = document.getElementById("gustoText").value.trim();
+        if (!v) return;
+        store.set("gustos", store.get("gustos", []).concat(v)); openGustos(); break;
+      }
+      case "delGusto": { const g = store.get("gustos", []); g.splice(+d.i, 1); store.set("gustos", g); openGustos(); break; }
+      case "psiLogin": openPsiLogin(); break;
+      case "psiEnter":
+        if (document.getElementById("psiPin").value === PSI_PIN) { closeSheet(); state.psi = true; render(); $screen.scrollTop = 0; }
+        else document.getElementById("psiErr").textContent = "PIN incorrecto."; break;
+      case "psiApprove": { const p = state.posts.find(x => x.id === +d.id); if (p) { p.pending = false; p.time = "Ahora"; store.set("posts", state.posts); } render(); toast("Testimonio aprobado"); break; }
+      case "psiReject": state.posts = state.posts.filter(x => x.id !== +d.id); store.set("posts", state.posts); render(); toast("Testimonio rechazado"); break;
+      case "psiExit": state.psi = false; render(); break;
       case "pickDay": pendingCita.day = d.label; selectChip(el); break;
       case "pickTime": pendingCita.time = d.t; selectChip(el); break;
       case "confirmCita":
