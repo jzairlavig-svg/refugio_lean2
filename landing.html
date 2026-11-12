@@ -2,49 +2,64 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Refugio para colegios</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
-:root{--bg:#f6f7fc;--ink:#22264a;--muted:#7b809e;--primary:#6b6ff2;--soft:#eceeff;--line:#eceef7}
-@media (prefers-color-scheme:dark){:root{--bg:#171a33;--ink:#eef0ff;--muted:#a9aed0;--soft:#262a55;--line:#2c3060}}
+:root{--bg:#f6f7fc;--card:#ffffff;--ink:#22264a;--muted:#7b809e;--primary:#6b6ff2;--primary-dark:#5a5ee0;--soft:#eceeff;--line:#e4e7f5}
+@media (prefers-color-scheme:dark){:root{--bg:#171a33;--card:#1e2242;--ink:#eef0ff;--muted:#a9aed0;--soft:#262a55;--line:#2c3060}}
 *{box-sizing:border-box;margin:0}
-body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
-main{max-width:640px;margin:0 auto;padding:32px 20px 48px}
-.brand{color:var(--primary);font-weight:700;font-size:14px}
-h1{font-size:30px;line-height:1.15;margin:12px 0}
-p.lead{color:var(--muted);font-size:16px;margin-bottom:22px}
-.cards{display:grid;gap:12px;margin-bottom:26px}
-.card{background:var(--soft);border-radius:16px;padding:14px 16px;font-size:14px}
-.card b{display:block;margin-bottom:2px}
-form{display:grid;gap:12px;background:var(--soft);border-radius:20px;padding:20px}
-label{font-size:12px;font-weight:600;color:var(--muted);display:grid;gap:6px}
-input,select{font:inherit;font-size:15px;padding:12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
-input:focus,select:focus{outline:2px solid var(--primary)}
-button{font:inherit;font-weight:600;background:var(--primary);color:#fff;border:0;border-radius:14px;padding:14px;cursor:pointer}
-.ok{display:none;background:var(--soft);border-radius:16px;padding:18px;text-align:center}
-small{color:var(--muted);font-size:12px}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+header{width:100%;max-width:1200px;margin:0 auto;padding:24px 24px 0;display:flex;align-items:center;justify-content:space-between}
+.brand{color:var(--primary);font-weight:700;font-size:22px;letter-spacing:-0.5px}
+main{flex:1;width:100%;max-width:1200px;margin:0 auto;padding:28px 24px 56px;display:grid;gap:32px;align-items:center}
+@media (min-width: 900px){
+  main{grid-template-columns:1.15fr 0.85fr;gap:56px;padding:48px 24px}
+}
+h1{font-size:clamp(28px, 4vw, 44px);line-height:1.12;margin:10px 0 16px;letter-spacing:-0.8px}
+p.lead{color:var(--muted);font-size:clamp(16px, 1.8vw, 18px);margin-bottom:28px;max-width:560px}
+.cards{display:grid;gap:14px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:16px 18px;font-size:14.5px}
+.card b{display:block;margin-bottom:4px;font-size:15.5px;color:var(--primary)}
+form{display:grid;gap:14px;background:var(--card);border:2px solid var(--line);border-radius:24px;padding:28px}
+form h2{font-size:20px;margin-bottom:4px}
+label{font-size:12.5px;font-weight:600;color:var(--muted);display:grid;gap:6px}
+input,select{font:inherit;font-size:15px;padding:12px 14px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+input:focus,select:focus{outline:none;border-color:var(--primary)}
+button{font:inherit;font-weight:700;background:var(--primary);color:#fff;border:0;border-radius:14px;padding:15px;cursor:pointer;box-shadow:0 4px 0 #4f53c9;transition:transform 0.1s,background 0.2s}
+button:hover{background:var(--primary-dark)}
+button:active{transform:translateY(2px);box-shadow:0 2px 0 #4f53c9}
+.ok{display:none;background:var(--soft);border:2px solid var(--primary);border-radius:20px;padding:28px;text-align:center}
+small{color:var(--muted);font-size:12.5px}
 </style>
 </head>
 <body>
-<main>
+<header>
   <span class="brand">refugio</span>
-  <h1>Que tus estudiantes pidan ayuda sin sentirse expuestos.</h1>
-  <p class="lead">Refugio es una app anónima de apoyo emocional para escolares de 12 a 17 años. Conecta a cada estudiante con el psicólogo del colegio, en silencio.</p>
-  <div class="cards">
-    <div class="card"><b>Detección temprana</b>Un semáforo privado ayuda a pedir apoyo antes de que haya una crisis visible.</div>
-    <div class="card"><b>Testimonios cuidados</b>Un psicólogo revisa cada mensaje antes de que se publique.</div>
-    <div class="card"><b>Datos anónimos para el colegio</b>Ves el clima emocional general sin identificar a ningún estudiante.</div>
-  </div>
-  <form id="f" novalidate>
-    <label>Nombre del colegio<input name="colegio" required maxlength="80" /></label>
-    <label>Tu cargo<select name="cargo"><option>Director(a)</option><option>Psicólogo(a)</option><option>Coordinador(a) de bienestar</option><option>Promotor(a)</option><option>Otro</option></select></label>
-    <label>Correo de contacto<input name="correo" type="email" required maxlength="80" /></label>
-    <label>Número aproximado de estudiantes<input name="n" type="number" min="1" max="5000" /></label>
-    <button type="submit">Quiero un piloto en mi colegio</button>
-    <small id="err" role="alert"></small>
-  </form>
-  <div class="ok" id="ok"><b>¡Gracias!</b><br>Recibimos tu interés y te contactaremos para coordinar un piloto.</div>
+</header>
+<main>
+  <section>
+    <h1>Que tus estudiantes pidan ayuda sin sentirse expuestos.</h1>
+    <p class="lead">Refugio es una app anónima de apoyo emocional para escolares de 12 a 17 años. Conecta a cada estudiante con el psicólogo del colegio, en silencio.</p>
+    <div class="cards">
+      <div class="card"><b>🚦 Detección temprana</b>Un semáforo privado ayuda a pedir apoyo antes de que haya una crisis visible.</div>
+      <div class="card"><b>🛡️ Testimonios cuidados</b>Un psicólogo revisa cada mensaje antes de que se publique.</div>
+      <div class="card"><b>📊 Datos anónimos para el colegio</b>Ves el clima emocional general sin identificar a ningún estudiante.</div>
+    </div>
+  </section>
+
+  <section>
+    <form id="f" novalidate>
+      <h2>Solicita un piloto para tu colegio</h2>
+      <label>Nombre del colegio<input name="colegio" required maxlength="80" placeholder="Ej. Colegio San Agustín" /></label>
+      <label>Tu cargo<select name="cargo"><option>Director(a)</option><option>Psicólogo(a)</option><option>Coordinador(a) de bienestar</option><option>Promotor(a)</option><option>Otro</option></select></label>
+      <label>Correo de contacto<input name="correo" type="email" required maxlength="80" placeholder="nombre@colegio.edu.pe" /></label>
+      <label>Número aproximado de estudiantes<input name="n" type="number" min="1" max="5000" placeholder="Ej. 450" /></label>
+      <button type="submit">Quiero un piloto en mi colegio</button>
+      <small id="err" role="alert"></small>
+    </form>
+    <div class="ok" id="ok"><b>¡Gracias! 💜</b><br>Recibimos tu interés y te contactaremos para coordinar un piloto.</div>
+  </section>
 </main>
 <script>
 (function(){
