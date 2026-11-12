@@ -366,6 +366,9 @@ select.input { appearance:auto; }
 .psi-item { background:#fff; border-radius:16px; padding:12px; box-shadow:var(--shadow); margin-bottom:10px; font-size:13px; line-height:1.45; }
 .psi-actions { display:flex; gap:8px; margin-top:10px; }
 .psi-actions .btn { padding:10px; font-size:13px; }
+.help-links { display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+.help-links a { display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; font-weight:600; font-size:13px; padding:11px; border-radius:12px; background:var(--primary); color:#fff; }
+.help-links a.alt { background:#fff; color:var(--primary); box-shadow:inset 0 0 0 1.5px var(--primary); }
 </style>
 </head>
 <body>
@@ -707,7 +710,11 @@ select.input { appearance:auto; }
         </button>
 
         <div class="urgent"><b>¿Necesitas ayuda urgente?</b>
-          Si estás en peligro, contacta con emergencias de tu país o busca a una persona adulta de confianza.</div>`;
+          Si estás en peligro o piensas en hacerte daño, no esperes a tu cita. Busca a un adulto de confianza o llama gratis a la Línea 113 del MINSA (salud mental, opción 5), las 24 horas.
+          <div class="help-links">
+            <a href="tel:113">${icon("bell", 16, 2)} Llamar al 113</a>
+            <a class="alt" href="https://wa.me/51955557000" target="_blank" rel="noopener">${icon("chat", 16, 2)} WhatsApp 955 557 000</a>
+          </div></div>`;
     }
   };
 
@@ -836,7 +843,8 @@ select.input { appearance:auto; }
       <div class="stack">
         <button class="btn" data-action="chat">${icon("chat", 17, 2)} Hablar con el psicólogo</button>
         <button class="btn ghost" data-action="quickCita">${icon("calendar", 17, 2)} Pedir cita en un toque</button>
-      </div>`);
+      </div>
+      <div class="help-links"><a href="tel:113">${icon("bell", 16, 2)} Llamar gratis al 113 (opción 5)</a></div>`);
     if (window.refugioTrack) window.refugioTrack("alerta_riesgo");
   }
 
