@@ -358,6 +358,11 @@ textarea:focus, .input:focus { border-color: var(--primary); }
 .checklist li { display: flex; gap: 10px; align-items: flex-start; }
 .checklist .check { width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px; }
 
+.badge { display:inline-block; font-size:10.5px; font-weight:600; color:#8a6a00; background:var(--yellow); border-radius:999px; padding:3px 9px; margin:10px 0 0; }
+.cmts { display:flex; flex-direction:column; gap:6px; margin:0 0 12px; }
+.cmts span { font-size:12px; color:var(--ink); background:#f3f4fb; border-radius:12px; padding:7px 10px; }
+.note-box { font-size:11.5px; color:#4d5278; background:#f3f4ff; border-radius:12px; padding:10px 12px; line-height:1.45; margin:4px 0 12px; }
+select.input { appearance:auto; }
 </style>
 </head>
 <body>
@@ -424,6 +429,10 @@ textarea:focus, .input:focus { border-color: var(--primary); }
   /* ---------- Configuración editable ---------- */
   const HORARIO = "Lunes a viernes · 8:00 a. m. – 1:00 p. m.";   // horario de atención del psicólogo
   const TIMES = ["8:00 a. m.", "9:30 a. m.", "11:00 a. m.", "12:30 p. m."];
+  const PSIS = [{ n: "Psic. Andrea Rojas", t: "Psicóloga del colegio" }, { n: "Psic. Luis Paredes", t: "Psicólogo del colegio" }];   // editar con los nombres reales
+  const GRADOS = ["1.º de secundaria", "2.º de secundaria", "3.º de secundaria", "4.º de secundaria", "5.º de secundaria", "Prefiero no decirlo"];
+  const COMENTARIOS = ["Gracias por contarlo 💜", "No estás solo/a", "A mí también me pasa", "Qué valiente por compartirlo", "Paso a paso, tú puedes"];
+  const RIESGO = /suicid|matarme|quitarme la vida|quiero morir|no quiero vivir|cortarme|autolesion|hacerme da[nñ]o|acabar con todo/;
 
   const AVATARS = [
     { n: "Zorrito", e: "🦊", bg: "#fbe3d3" }, { n: "Osito", e: "🐻", bg: "#efe0d2" },
@@ -519,6 +528,7 @@ textarea:focus, .input:focus { border-color: var(--primary); }
                 <button type="button" class="eye" data-action="togglePw" aria-label="Mostrar u ocultar contraseña">${icon("eye", 18, 1.8)}</button>
               </div>
             </div>
+            ${reg ? `<div class="field"><label for="f-grado">Tu grado (opcional)</label><select class="input" id="f-grado" name="grado">${GRADOS.map(g => `<option>${g}</option>`).join("")}</select></div>` : ""}
             <p class="auth-error" id="authError" role="alert"></p>
             <button class="btn" type="submit">${reg ? "Crear cuenta" : "Iniciar sesión"}</button>
             ${reg ? "" : `<button type="button" class="link-btn" data-action="toast" data-msg="Esta demo guarda los datos solo en tu dispositivo">¿Olvidaste tu contraseña?</button>`}
@@ -591,7 +601,7 @@ textarea:focus, .input:focus { border-color: var(--primary); }
           </div>
           <div class="stack">
             <button class="btn" data-action="chat">${icon("chat", 18, 2)} Iniciar Chat Privado</button>
-            ${state.signal === "red" ? `<button class="btn ghost appear" data-action="cita">${icon("calendar", 18, 2)} Pedir cita</button>` : ""}
+            ${state.signal === "red" ? `<button class="btn appear" data-action="quickCita">${icon("calendar", 18, 2)} Pedir cita en un toque</button><button class="link-btn appear" data-action="cita">Elegir otro horario o psicólogo</button>` : ""}
           </div>
           <div class="hours">${icon("clock", 13, 2)} Atención: ${HORARIO}</div>
           <div class="note">${icon("heart", 13, 2)} Puedes cambiar de idea cuando quieras.</div>
@@ -633,7 +643,7 @@ textarea:focus, .input:focus { border-color: var(--primary); }
               <div class="who"><b>Anónimo · ${esc(p.animal)}</b><small>${p.time}</small></div>
               <button aria-label="Más opciones" style="color:var(--muted)" data-action="toast" data-msg="Gracias por cuidar la comunidad">${icon("more", 18)}</button>
             </div>
-            <p>${esc(p.text)}</p>
+            ${p.pending ? '<span class="badge">En revisión por el psicólogo</span>' : ""}<p>${esc(p.text)}</p>${(p.cmts || []).length ? `<div class="cmts">${p.cmts.map(c => `<span>💬 ${esc(c)}</span>`).join("")}</div>` : ""}
             <div class="reacts">
               <button class="chip ${p.mine.includes("yo") ? "on" : ""}" data-action="react" data-id="${p.id}" data-k="yo">🙋 Yo también · ${p.reacts.yo}</button>
               <button class="chip ${p.mine.includes("animo") ? "on" : ""}" data-action="react" data-id="${p.id}" data-k="animo">💪 Ánimo · ${p.reacts.animo}</button>
@@ -666,7 +676,7 @@ textarea:focus, .input:focus { border-color: var(--primary); }
           ${c ? `
           <div class="cita-banner">
             ${icon("calendar", 18, 2)}
-            <span>Tu cita: <b>${esc(c.day)} · ${esc(c.time)}</b></span>
+            <span>Tu cita: <b>${esc(c.day)} · ${esc(c.time)}</b>${PSIS[c.psi] ? " con " + esc(PSIS[c.psi].n) : ""}${c.padres ? "<br><small>Se avisará a tus padres porque lo pediste.</small>" : ""}</span>
             <button class="link-btn" data-action="cancelCita">Cancelar</button>
           </div>` : ""}
           <p class="desc" style="margin-bottom:14px">Puedes empezar con un «hola». Comparte solo lo que te resulte cómodo, a tu ritmo.</p>
@@ -809,10 +819,19 @@ textarea:focus, .input:focus { border-color: var(--primary); }
   }
 
   function openComment(id) {
-    sheet("Escribe un comentario", `
-      <textarea id="commentText" rows="4" maxlength="200" placeholder="Un mensaje amable puede hacer mucho."></textarea>
-      <button class="btn" style="margin-top:12px" data-action="sendComment" data-id="${id}">Enviar comentario</button>`,
-      root => root.querySelector("#commentText").focus());
+    sheet("Responder con apoyo", `
+      <p class="subtle" style="margin:-4px 0 8px;line-height:1.45">Para cuidar a todos, solo puedes responder con mensajes de apoyo.</p>
+      <div class="stack">${COMENTARIOS.map(t => `<button class="btn ghost" data-action="sendComment" data-id="${id}" data-text="${esc(t)}">${esc(t)}</button>`).join("")}</div>`);
+  }
+
+  function openRisk() {
+    sheet("Estamos contigo 💜", `
+      <p class="subtle" style="margin:-4px 0 12px;line-height:1.5">Lo que escribiste es importante y no queremos que lo cargues solo/a. No lo publicamos, pero puedes hablar ahora con el psicólogo.</p>
+      <div class="stack">
+        <button class="btn" data-action="chat">${icon("chat", 17, 2)} Hablar con el psicólogo</button>
+        <button class="btn ghost" data-action="quickCita">${icon("calendar", 17, 2)} Pedir cita en un toque</button>
+      </div>`);
+    if (window.refugioTrack) window.refugioTrack("alerta_riesgo");
   }
 
   /* Encuesta emergente: aparece al dejar el primer comentario */
@@ -831,9 +850,12 @@ textarea:focus, .input:focus { border-color: var(--primary); }
 
   /* Pedir cita: elegir día y hora con el psicólogo */
   function openCita() {
-    pendingCita = { day: null, time: null };
+    pendingCita = { day: null, time: null, psi: 0, padres: false };
     sheet("Pedir cita", `
-      <p class="subtle" style="margin:-4px 0 6px;line-height:1.45">Elige un día y una hora con el psicólogo de tu centro. Tú decides qué contarle; no avisamos a nadie más.</p>
+      <button class="btn" data-action="quickCita" style="margin-bottom:10px">${icon("calendar", 17, 2)} Reservar el próximo horario libre</button>
+      <p class="subtle" style="margin:0 0 6px;line-height:1.45">O elige tú. No avisamos a nadie más.</p>
+      <p class="chips-label">Psicólogo</p>
+      <div class="chips">${PSIS.map((p, i) => `<button class="chip ${i === 0 ? "on" : ""}" data-action="pickPsi" data-i="${i}">${esc(p.n)}</button>`).join("")}</div>
       <p class="chips-label">Día</p>
       <div class="chips">
         ${nextDays(5).map(dt => { const l = dayLabel(dt); return `<button class="chip day" data-action="pickDay" data-label="${l}">${l}</button>`; }).join("")}
@@ -842,6 +864,8 @@ textarea:focus, .input:focus { border-color: var(--primary); }
       <div class="chips">
         ${TIMES.map(t => `<button class="chip" data-action="pickTime" data-t="${t}">${t}</button>`).join("")}
       </div>
+      <div class="chips"><button class="chip" data-action="togglePadres">👪 Avisar a mis padres</button></div>
+      <p class="note-box">Solo avisamos a tus padres si tú lo pides. Si el psicólogo ve un riesgo grave, podría contactar a un adulto para cuidarte.</p>
       <button class="btn" data-action="confirmCita" disabled>Confirmar cita</button>
       <div class="hours">${icon("clock", 13, 2)} Atención: ${HORARIO}</div>`);
   }
@@ -862,6 +886,7 @@ textarea:focus, .input:focus { border-color: var(--primary); }
         ${li("No avisamos a nadie. Tú decides qué compartes con el psicólogo y cuándo.")}
         ${li("Puedes usar un apodo y un avatar. No pedimos datos reales.")}
         ${li("El semáforo es opcional: úsalo solo si te sirve.")}
+        ${li("Solo si hay un riesgo grave, el psicólogo podría avisar a un adulto para cuidarte.")}
       </ul>
       <button class="btn" data-action="close">Entendido</button>`);
     $overlay.classList.add("center");
@@ -908,9 +933,10 @@ textarea:focus, .input:focus { border-color: var(--primary); }
         const v = document.getElementById("postText").value.trim();
         if (!v) return;
         const a = avatarOf(state.session);
-        state.posts.unshift({ id: Date.now(), animal: a.n, emoji: a.e, bg: a.bg, time: "Ahora", text: v, likes: 0, liked: false, reacts: { yo: 0, animo: 0 }, mine: [] });
+        if (RIESGO.test(v.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))) { openRisk(); break; }
+        state.posts.unshift({ id: Date.now(), animal: a.n, emoji: a.e, bg: a.bg, time: "Ahora", text: v, pending: true, likes: 0, liked: false, reacts: { yo: 0, animo: 0 }, mine: [] });
         store.set("posts", state.posts);
-        closeSheet(); render(); toast("Gracias por compartir 💜"); break;
+        closeSheet(); render(); toast("Un psicólogo lo revisará antes de publicarlo 💜"); break;
       }
       case "authMode": {
         const em = document.querySelector('form[data-form="auth"] [name="apodo"]');
@@ -936,9 +962,10 @@ textarea:focus, .input:focus { border-color: var(--primary); }
         render(); break;
       case "comment": openComment(d.id); break;
       case "sendComment": {
-        const txt = document.getElementById("commentText").value.trim();
+        const txt = d.text;
         if (!txt) return;
         const p = state.posts.find(x => x.id === +d.id);
+        p.cmts = (p.cmts || []).concat(txt);
         p.comments = (p.comments || 0) + 1;
         store.set("posts", state.posts);
         closeSheet(); render();
@@ -954,11 +981,18 @@ textarea:focus, .input:focus { border-color: var(--primary); }
       case "cita":
         if (state.tab !== "apoyo") go("apoyo");
         openCita(); break;
+      case "quickCita":
+        state.cita = { day: dayLabel(nextDays(1)[0]), time: TIMES[0], psi: 0, padres: false };
+        store.set("cita", state.cita);
+        closeSheet(); if (state.tab !== "apoyo") go("apoyo"); else render();
+        toast("Cita pedida: " + state.cita.day + " · " + state.cita.time + " 💜"); break;
+      case "pickPsi": pendingCita.psi = +d.i; selectChip(el); break;
+      case "togglePadres": pendingCita.padres = !pendingCita.padres; el.classList.toggle("on", pendingCita.padres); break;
       case "pickDay": pendingCita.day = d.label; selectChip(el); break;
       case "pickTime": pendingCita.time = d.t; selectChip(el); break;
       case "confirmCita":
         if (!(pendingCita.day && pendingCita.time)) return;
-        state.cita = { day: pendingCita.day, time: pendingCita.time };
+        state.cita = { day: pendingCita.day, time: pendingCita.time, psi: pendingCita.psi || 0, padres: !!pendingCita.padres };
         store.set("cita", state.cita);
         closeSheet(); render(); toast("Listo, tu cita quedó pedida 💜"); break;
       case "cancelCita":
@@ -988,13 +1022,14 @@ textarea:focus, .input:focus { border-color: var(--primary); }
     if (state.authMode === "register") {
       if (pass.length < 4) return fail("La contraseña debe tener al menos 4 caracteres.");
       if (users[key]) return fail("Ese apodo ya existe. Prueba con otro o inicia sesión.");
-      users[key] = { name: nick, hash: await sha(pass), avatar: state.authAvatar };
+      const grade = (f.querySelector('[name="grado"]') || {}).value || "";
+      users[key] = { name: nick, hash: await sha(pass), avatar: state.authAvatar, grade };
       store.set("users", users);
-      startSession({ name: nick, avatar: state.authAvatar });
+      startSession({ name: nick, avatar: state.authAvatar, grade });
     } else {
       const u = users[key];
       if (!u || u.hash !== await sha(pass)) return fail("Apodo o contraseña incorrectos.");
-      startSession({ name: u.name, avatar: Number.isInteger(u.avatar) ? u.avatar : 0 });
+      startSession({ name: u.name, avatar: Number.isInteger(u.avatar) ? u.avatar : 0, grade: u.grade || "" });
     }
   });
 
