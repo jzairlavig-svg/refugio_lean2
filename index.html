@@ -321,7 +321,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   box-shadow: var(--shadow); text-align: left; margin-bottom: 12px;
   transition: transform 0.15s, border-color 0.2s;
 }
-.row-card:hover { transform: translateY(-1px); }
+.row-card:hover { transform: translateY(-1px); border-color: #d0d3ff; }
 .row-card .ico {
   width: 42px; height: 42px; border-radius: 12px;
   background: var(--primary-soft); color: var(--primary);
@@ -415,8 +415,9 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .overlay[hidden] { display: none; }
 .sheet {
-  width: 100%; max-width: 500px; background: #fff; border-radius: 26px 26px 0 0;
+  width: 100%; max-width: 520px; background: #fff; border-radius: 26px 26px 0 0;
   padding: 20px 22px 28px; max-height: 88vh; display: flex; flex-direction: column;
+  overflow-y: auto;
   animation: up 0.25s ease both;
 }
 @media (min-width: 640px) {
@@ -426,7 +427,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 @keyframes up { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .sheet-head h3 { font-size: 18px; font-weight: 700; }
-.close { width: 34px; height: 34px; border-radius: 50%; background: #f1f2f9; display: grid; place-items: center; }
+.close { width: 34px; height: 34px; border-radius: 50%; background: #f1f2f9; display: grid; place-items: center; flex-shrink: 0; }
 textarea, .input {
   width: 100%; border: 2px solid var(--line); border-radius: 14px;
   padding: 12px 14px; font: inherit; font-size: 14px; resize: none; background: #fafbff; outline: none; color: var(--ink);
@@ -520,6 +521,44 @@ select.input { appearance:auto; }
 .help-links a { display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; font-weight:600; font-size:13px; padding:11px; border-radius:12px; background:var(--primary); color:#fff; }
 .help-links a.alt { background:#fff; color:var(--primary); box-shadow:inset 0 0 0 1.5px var(--primary); }
 
+/* Tarjetas interactivas de Ideas para cuidarte */
+.care-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  background: #fafbff;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  font-size: 13.5px;
+  transition: all 0.15s;
+}
+.care-step.done {
+  background: var(--green);
+  border-color: var(--green-dot);
+  color: #1e5231;
+  font-weight: 600;
+}
+.care-step .num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 13px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.care-step.done .num {
+  background: var(--green-dot);
+  color: #fff;
+}
+
 /* Tarjetas del Panel Lateral Derecho (Escritorio) */
 .rail-card {
   background: var(--card);
@@ -612,6 +651,57 @@ select.input { appearance:auto; }
   ];
   const avatarOf = s => AVATARS[s && Number.isInteger(s.avatar) ? s.avatar : 0] || AVATARS[0];
 
+  /* Datos para "Alguien de confianza" e "Ideas para cuidarte" */
+  const TRUST_WHO = [
+    { k: "familia", l: "🏠 Mamá / Papá", intro: "Hola, quería contarte algo importante para mí." },
+    { k: "profe", l: "🏫 Un profe o tutor", intro: "Hola profe, ¿tendría unos minutos para conversar?" },
+    { k: "amigo", l: "🤝 Un amigo/a", intro: "Hola, ¿tienes un ratito? Necesito desahogarme con alguien." },
+    { k: "otro", l: "💜 Otro adulto de confianza", intro: "Hola, confío mucho en ti y quería contarte cómo me he sentido." }
+  ];
+  const TRUST_TOPIC = [
+    { k: "abrumado", l: "😮‍💨 Me siento abrumado/a", body: "Últimamente siento que todo se me junta y me cuesta concentrarme. No necesito que lo resuelvas ahora, solo quería que lo sepas y no guardármelo solo/a." },
+    { k: "triste", l: "😔 He tenido días difíciles", body: "Estos últimos días me he sentido con el ánimo bajo y un poco triste. Me haría bien conversar un rato cuando tengas tiempo." },
+    { k: "consejo", l: "🧭 Necesito un consejo", body: "Me está pasando algo que no sé bien cómo manejar y me ayudaría mucho escucharte o que me acompañes a pedir apoyo." },
+    { k: "compania", l: "🫂 Solo quiero compañía", body: "Hoy no tuve un buen día. Aún no me sale hablar mucho del tema, pero me haría bien pasar un rato tranquilo/a contigo." }
+  ];
+
+  const CARE_CATS = [
+    {
+      k: "54321",
+      l: "🖐️ Calmar la mente (5-4-3-2-1)",
+      desc: "Si sientes ansiedad o muchos pensamientos a la vez, toca cada paso mientras miras a tu alrededor:",
+      steps: [
+        ["5", "Mira 5 cosas de tu color favorito a tu alrededor"],
+        ["4", "Toca 4 texturas distintas (tu ropa, la mesa, tus manos)"],
+        ["3", "Escucha 3 sonidos que antes no habías notado"],
+        ["2", "Identifica 2 aromas o respira profundo dos veces"],
+        ["1", "Dite 1 frase amable: «Estoy haciendo lo mejor que puedo»"]
+      ]
+    },
+    {
+      k: "abruma",
+      l: "🌊 Cuando todo abruma",
+      desc: "Pequeñas acciones de menos de 5 minutos para bajar la presión hoy:",
+      steps: [
+        ["💧", "Toma un vaso de agua fría despacio o lávate la cara"],
+        ["📝", "Elige solo 1 tarea pequeña y deja el resto para después"],
+        ["📵", "Aléjate de las pantallas y redes sociales por 15 minutos"],
+        ["🎧", "Escucha una canción tranquila con los ojos cerrados"]
+      ]
+    },
+    {
+      k: "energia",
+      l: "🌱 Recargar energía",
+      desc: "Ideas simples para reconectar contigo sin exigirte de más:",
+      steps: [
+        ["🚶", "Estira los hombros y camina 5 minutos sin mirar el celular"],
+        ["☀️", "Acércate a una ventana o sal al patio a tomar aire fresco"],
+        ["📓", "Anota 3 cosas pequeñas que te gustan en «Mi espacio»"],
+        ["🌙", "Acuéstate 20 minutos antes hoy dejando el celular lejos"]
+      ]
+    }
+  ];
+
   /* ---------- Estado ---------- */
   const store = {
     get(k, d) { try { const v = localStorage.getItem("refugio:" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -637,6 +727,8 @@ select.input { appearance:auto; }
     posts: Array.isArray(savedPosts) ? savedPosts : DEFAULT_POSTS
   };
   let pendingCita = { day: null, time: null };
+  let trustState = { who: 0, topic: 0 };
+  let careState = { cat: 0, done: {} };
 
   const MOODS = [
     { e: "😔", l: "Muy mal" }, { e: "🙁", l: "Mal" }, { e: "😐", l: "Regular" },
@@ -867,12 +959,12 @@ select.input { appearance:auto; }
         </section>
 
         <h3 class="section-title">Otras formas de dar el primer paso</h3>
-        <button class="row-card" data-action="toast" data-msg="Te ayudaremos a preparar lo que quieres contar">
+        <button class="row-card" data-action="confianza">
           <span class="ico">${icon("users", 19)}</span>
           <span class="txt"><b>Alguien de confianza</b><span>Prepara lo que quieres contarle.</span></span>
           <span class="chev">${icon("chev", 18)}</span>
         </button>
-        <button class="row-card" data-action="toast" data-msg="Recursos para los días difíciles, muy pronto">
+        <button class="row-card" data-action="cuidarte">
           <span class="ico">${icon("leaf", 19)}</span>
           <span class="txt"><b>Ideas para cuidarte</b><span>Recursos para los días difíciles.</span></span>
           <span class="chev">${icon("chev", 18)}</span>
@@ -913,7 +1005,8 @@ select.input { appearance:auto; }
         <p>Tu espacio personal y confidencial en cualquier momento.</p>
         <div class="stack">
           <button class="btn ghost" data-action="pause">🦊 Pausa de 2 minutos</button>
-          <button class="btn ghost" data-action="diary">${icon("edit", 16, 2)} Diario privado</button>
+          <button class="btn ghost" data-action="confianza">${icon("users", 16, 2)} Alguien de confianza</button>
+          <button class="btn ghost" data-action="cuidarte">${icon("leaf", 16, 2)} Ideas para cuidarte</button>
         </div>
         ${c ? `<div class="cita-banner" style="margin-top:12px;margin-bottom:0">${icon("calendar", 16, 2)}<span>Cita: <b>${esc(c.day)} · ${esc(c.time)}</b></span></div>` : ""}
       </div>
@@ -996,6 +1089,69 @@ select.input { appearance:auto; }
     t.textContent = msg;
     $app.appendChild(t);
     setTimeout(() => t.remove(), 2200);
+  }
+
+  /* 1. Modal interactivo: Alguien de confianza */
+  function buildTrustMessage() {
+    const w = TRUST_WHO[trustState.who] || TRUST_WHO[0];
+    const t = TRUST_TOPIC[trustState.topic] || TRUST_TOPIC[0];
+    return `${w.intro}\n\n${t.body}`;
+  }
+
+  function openConfianza() {
+    const savedDraft = store.get("trustDraft", "");
+    const initialText = savedDraft || buildTrustMessage();
+    sheet("Alguien de confianza", `
+      <p class="subtle" style="margin:-4px 0 10px;line-height:1.45">A veces empezar a hablar cuesta. Elige a quién quieres escribirle y arma tu mensaje a tu ritmo.</p>
+      <p class="chips-label">1. ¿Con quién te gustaría hablar?</p>
+      <div class="chips">
+        ${TRUST_WHO.map((w, i) => `<button type="button" class="chip ${trustState.who === i ? "on" : ""}" data-action="pickTrustWho" data-i="${i}">${w.l}</button>`).join("")}
+      </div>
+      <p class="chips-label">2. ¿Qué quieres transmitirle?</p>
+      <div class="chips">
+        ${TRUST_TOPIC.map((t, i) => `<button type="button" class="chip ${trustState.topic === i ? "on" : ""}" data-action="pickTrustTopic" data-i="${i}">${t.l}</button>`).join("")}
+      </div>
+      <p class="chips-label" style="margin-bottom:6px">3. Tu mensaje (puedes editarlo como quieras)</p>
+      <textarea id="trustText" rows="5">${esc(initialText)}</textarea>
+      <div class="stack" style="margin-top:12px">
+        <button type="button" class="btn" data-action="copyTrust">${icon("send", 16, 2)} Copiar mensaje para enviar</button>
+        <button type="button" class="btn ghost" data-action="saveTrust">${icon("edit", 16, 2)} Guardar borrador para después</button>
+      </div>
+      <p class="note-box" style="margin-top:12px;margin-bottom:0">💡 Consejo: No tienes que contarlo todo de golpe. Enviar este mensaje por WhatsApp o mostrarle tu pantalla ya es un gran primer paso.</p>
+    `);
+  }
+
+  /* 2. Modal interactivo: Ideas para cuidarte */
+  function openCuidarte() {
+    const cat = CARE_CATS[careState.cat] || CARE_CATS[0];
+    const doneMap = careState.done[cat.k] || {};
+    const totalDone = Object.values(doneMap).filter(Boolean).length;
+
+    sheet("Ideas para cuidarte", `
+      <p class="subtle" style="margin:-4px 0 8px;line-height:1.45">Elige lo que necesitas en este momento. Toca cada idea para ir completándola a tu ritmo.</p>
+      <div class="chips" style="margin-top:4px">
+        ${CARE_CATS.map((c, i) => `<button type="button" class="chip ${careState.cat === i ? "on" : ""}" data-action="pickCareCat" data-i="${i}">${c.l}</button>`).join("")}
+      </div>
+      <p class="subtle" style="font-size:12.5px;margin:4px 0 10px">${esc(cat.desc)}</p>
+      <div>
+        ${cat.steps.map((s, idx) => {
+          const isDone = !!doneMap[idx];
+          return `
+            <button type="button" class="care-step ${isDone ? "done" : ""}" data-action="toggleCareStep" data-idx="${idx}">
+              <span class="num">${isDone ? "✓" : s[0]}</span>
+              <span style="flex:1">${esc(s[1])}</span>
+            </button>`;
+        }).join("")}
+      </div>
+      <div class="note-box" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <span>Progreso de hoy: <b>${totalDone} de ${cat.steps.length}</b> pasos</span>
+        ${totalDone > 0 ? `<button type="button" class="link-btn" data-action="resetCareSteps">Reiniciar</button>` : ""}
+      </div>
+      <div class="stack" style="margin-top:6px">
+        <button type="button" class="btn ghost" data-action="pause">🦊 Hacer pausa de respiración (2 min)</button>
+        <button type="button" class="btn" data-action="close">Listo, gracias 💜</button>
+      </div>
+    `);
   }
 
   function openChat() {
@@ -1207,6 +1363,67 @@ select.input { appearance:auto; }
       case "pause": openPause(); break;
       case "diary": openDiary(); break;
       case "share": openShare(); break;
+
+      /* Eventos de Alguien de confianza */
+      case "confianza":
+        openConfianza();
+        if (window.refugioTrack) window.refugioTrack("confianza_abrir");
+        break;
+      case "pickTrustWho":
+        trustState.who = +d.i;
+        store.set("trustDraft", "");
+        openConfianza();
+        break;
+      case "pickTrustTopic":
+        trustState.topic = +d.i;
+        store.set("trustDraft", "");
+        openConfianza();
+        break;
+      case "copyTrust": {
+        const ta = document.getElementById("trustText");
+        const val = ta ? ta.value.trim() : "";
+        if (!val) return;
+        store.set("trustDraft", val);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(val).then(() => toast("Mensaje copiado al portapapeles 💜")).catch(() => toast("Mensaje listo para copiar 💜"));
+        } else {
+          if (ta) { ta.select(); document.execCommand("copy"); }
+          toast("Mensaje copiado 💜");
+        }
+        if (window.refugioTrack) window.refugioTrack("confianza_copiar");
+        break;
+      }
+      case "saveTrust": {
+        const ta = document.getElementById("trustText");
+        if (ta) store.set("trustDraft", ta.value);
+        closeSheet();
+        toast("Borrador guardado en tu dispositivo 💜");
+        break;
+      }
+
+      /* Eventos de Ideas para cuidarte */
+      case "cuidarte":
+        openCuidarte();
+        if (window.refugioTrack) window.refugioTrack("cuidarte_abrir");
+        break;
+      case "pickCareCat":
+        careState.cat = +d.i;
+        openCuidarte();
+        break;
+      case "toggleCareStep": {
+        const cat = CARE_CATS[careState.cat] || CARE_CATS[0];
+        careState.done[cat.k] = careState.done[cat.k] || {};
+        careState.done[cat.k][+d.idx] = !careState.done[cat.k][+d.idx];
+        openCuidarte();
+        break;
+      }
+      case "resetCareSteps": {
+        const cat = CARE_CATS[careState.cat] || CARE_CATS[0];
+        careState.done[cat.k] = {};
+        openCuidarte();
+        break;
+      }
+
       case "saveDiary": {
         store.set("diary", document.getElementById("diaryText").value);
         closeSheet(); toast("Guardado solo para ti"); break;
