@@ -45,9 +45,8 @@
         case "clearSignal": track("semaforo", "no_usar"); break;
         case "react": track("reaccion", d.k); break;
         case "like": track("me_gusta"); break;
-        case "sendComment":
-          v = document.getElementById("commentText");
-          if (v && v.value.trim()) track("comentario"); break;
+        case "sendComment": track("comentario", d.text); break;
+        case "quickCita": track("cita_confirmar", "un_toque"); break;
         case "publish":
           v = document.getElementById("postText");
           if (v && v.value.trim()) track("publicacion"); break;
@@ -107,6 +106,28 @@
     return lines.join("\n");
   }
 
+  /* Vista agregada y anónima para el colegio (sin datos individuales) */
+  function colegio() {
+    var by = {};
+    load().forEach(function (x) { (by[x.s] = by[x.s] || []).push(x); });
+    var sem = { green: 0, yellow: 0, red: 0 }, ani = {}, citas = 0, alertas = 0;
+    Object.keys(by).forEach(function (k) {
+      var ev = by[k], ls = null, la = null;
+      ev.forEach(function (x) {
+        if (x.e === "semaforo" && x.d !== "no_usar") ls = x.d;
+        if (x.e === "animo") la = x.d;
+        if (x.e === "alerta_riesgo") alertas++;
+      });
+      if (ls && sem[ls] !== undefined) sem[ls]++;
+      if (la) ani[la] = (ani[la] || 0) + 1;
+      if (ev.some(function (x) { return x.e === "cita_confirmar"; })) citas++;
+    });
+    var am = MOODS.map(function (m) { return m + ": " + (ani[m] || 0); }).join(" · ");
+    return "<h4 style='font-size:13px;margin:14px 0 4px'>Vista del colegio (datos anónimos)</h4>" +
+      "<p style='line-height:1.6'>Semáforo: 🟢 " + sem.green + " · 🟡 " + sem.yellow + " · 🔴 " + sem.red +
+      "<br>Ánimo: " + am + "<br>Citas pedidas: " + citas + " · Alertas de riesgo: " + alertas + "</p>";
+  }
+
   /* ---------- Panel de facilitador ---------- */
   function panel() {
     var old = document.getElementById("rf-panel"); if (old) { old.remove(); return; }
@@ -124,6 +145,7 @@
       "<h3 style='font-size:16px;margin-bottom:4px'>Panel de facilitador</h3>" +
       "<p style='color:#7b809e;margin-bottom:10px'>Este dispositivo: " + s.n + " sesión(es), " + s.total + " eventos.</p>" +
       "<table style='width:100%;border-collapse:collapse'>" + rows + "</table>" +
+      colegio() +
       "<p style='color:#7b809e;font-size:11px;margin:10px 0'>Cada dispositivo guarda sus propios datos. Descarga el CSV de cada uno y súmalos, o configura ENDPOINT en tracking.js.</p>" +
       "<div style='display:flex;gap:8px'>" +
       "<button id='rf-dl' style='flex:1;padding:10px;border-radius:12px;background:#6b6ff2;color:#fff;font-weight:600'>Descargar CSV</button>" +
