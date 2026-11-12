@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f6f7fc" />
+  <meta name="theme-color" content="#6b6ff2" />
   <title>Refugio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -41,6 +41,84 @@ html, body {
 }
 
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+/* ---------- Intro de Entrada (Splash Screen) ---------- */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: linear-gradient(145deg, #6b6ff2 0%, #5357d6 100%);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+  cursor: pointer;
+  user-select: none;
+}
+.splash.hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.splash-mascot {
+  width: 96px;
+  height: 96px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  font-size: 52px;
+  margin-bottom: 18px;
+  box-shadow: 0 16px 36px rgba(20, 24, 70, 0.25);
+  animation: splashPop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.splash-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  margin-bottom: 8px;
+  animation: fade 0.5s 0.15s ease both;
+}
+.splash-tag {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 280px;
+  line-height: 1.45;
+  margin-bottom: 28px;
+  animation: fade 0.5s 0.25s ease both;
+}
+.splash-bar {
+  width: 140px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  overflow: hidden;
+  animation: fade 0.5s 0.3s ease both;
+}
+.splash-fill {
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: 999px;
+  transform-origin: left;
+  animation: splashLoad 1.5s ease-in-out forwards;
+}
+@keyframes splashPop {
+  0% { opacity: 0; transform: scale(0.7) translateY(12px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes splashLoad {
+  0% { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
 
 /* ---------- Contenedor Principal Adaptable (Estilo Duolingo) ---------- */
 .phone {
@@ -583,6 +661,17 @@ select.input { appearance:auto; }
 </style>
 </head>
 <body>
+  <!-- Intro de Entrada (Splash Screen) -->
+  <div class="splash" id="splash" role="status" aria-label="Cargando Refugio">
+    <div class="splash-mascot">🦊</div>
+    <div class="splash-brand">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="17" r="2"/><circle cx="17" cy="6" r="2"/><path d="M8.5 15.5C11 13 13 11 15.5 7.5"/><path d="M5 7c2 0 4 1 5 3"/></svg>
+      refugio
+    </div>
+    <p class="splash-tag">Tu espacio seguro para respirar, expresarte y pedir apoyo a tu ritmo.</p>
+    <div class="splash-bar"><div class="splash-fill"></div></div>
+  </div>
+
   <div class="phone" id="app">
     <main class="screen" id="screen" aria-live="polite"></main>
 
@@ -597,6 +686,19 @@ select.input { appearance:auto; }
 /* Refugio · app de bienestar emocional (demo estática adaptable) */
 (function () {
   "use strict";
+
+  /* Control de la Intro de Entrada (Splash Screen) */
+  const $splash = document.getElementById("splash");
+  function hideSplash() {
+    if ($splash && !$splash.classList.contains("hide")) {
+      $splash.classList.add("hide");
+      setTimeout(() => { if ($splash && $splash.parentNode) $splash.remove(); }, 500);
+    }
+  }
+  if ($splash) {
+    $splash.addEventListener("click", hideSplash);
+    setTimeout(hideSplash, 1750);
+  }
 
   const P = {
     home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
@@ -1328,7 +1430,7 @@ select.input { appearance:auto; }
   }
   function maybePrivacy() {
     if (state.session && !store.get("privacyIntroSeen", false)) {
-      setTimeout(() => { if (state.session && $overlay.hidden) openPrivacy(); }, 500);
+      setTimeout(() => { if (state.session && $overlay.hidden) openPrivacy(); }, 2000);
     }
   }
 
